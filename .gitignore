@@ -2,6 +2,9 @@
 *.gen.*
 .godot/
 
+# Clangd stuff
+.cache
+
 # Ignore library files but not the gdextension file
 /bin/**
 !project/bin/*.gdextension
