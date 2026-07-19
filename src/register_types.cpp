@@ -6,6 +6,8 @@
 #include <godot_cpp/godot.hpp>
 
 #include "example_class.h"
+#include "wfc_config.h"
+#include "wfc_wrapper.h"
 
 using namespace godot;
 
@@ -14,6 +16,8 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level) {
 		return;
 	}
 	GDREGISTER_CLASS(ExampleClass);
+	GDREGISTER_CLASS(WFCConfig);
+	GDREGISTER_CLASS(WFC);
 }
 
 void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {

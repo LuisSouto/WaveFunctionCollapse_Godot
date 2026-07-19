@@ -38,6 +38,13 @@ add_library(${LIBNAME} SHARED)
 target_sources(${LIBNAME} PRIVATE
     src/register_types.cpp
     src/example_class.cpp
+    src/wfc_config.cpp
+    src/wfc_wrapper.cpp
+)
+
+target_include_directories(${LIBNAME}
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 # Link bindings and your static WFC solver
@@ -68,11 +75,12 @@ set_target_properties(${LIBNAME} PROPERTIES
 )
 
 # --- 6. PERFORMANCE (LTO/IPO) ---
-if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set_target_properties(${LIBNAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
-    # This ensures your solver submodule also gets optimized into the main plugin
     set_target_properties(WaveFunctionCollapse PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
-    message(STATUS "LTO/IPO requested for non-debug build.")
+    message(STATUS "LTO/IPO enabled for Release build.")
+else()
+    message(STATUS "Build type is ${CMAKE_BUILD_TYPE}, skipping LTO.")
 endif()
 
 # --- 7. DOCUMENTATION (Optional) ---
