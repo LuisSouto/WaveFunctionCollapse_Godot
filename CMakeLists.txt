@@ -1,11 +1,14 @@
 # Using the same minimum as the godot-cpp project
 cmake_minimum_required(VERSION 3.17)
 
+# Clangd autocompletion support
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Silence unused variable warning when specified from toolchain
 if(CMAKE_C_COMPILER)
 endif()
 
-set(LIBNAME "EXTENSION-NAME") # "The name of the library"
+set(LIBNAME "wavefunctioncollapse") # "The name of the library"
 set(GODOT_PROJECT_DIR "project" CACHE STRING "The directory of a Godot project folder")
 
 # Make sure all the dependencies are satisfied
@@ -71,8 +74,8 @@ endif()
 
 target_link_libraries(${LIBNAME} PRIVATE godot-cpp)
 
-# Require at least C++17 for this target
-set_property(TARGET ${LIBNAME} PROPERTY CXX_STANDARD 17)
+# Require at least C++20 for this target
+set_property(TARGET ${LIBNAME} PROPERTY CXX_STANDARD 20)
 
 set_target_properties(${LIBNAME}
     PROPERTIES

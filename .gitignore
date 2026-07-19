@@ -5,6 +5,9 @@
 # Clangd stuff
 .cache
 
+# Ignore build directories
+/build/
+
 # Ignore library files but not the gdextension file
 /bin/**
 !project/bin/*.gdextension
