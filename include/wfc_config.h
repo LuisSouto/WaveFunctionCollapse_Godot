@@ -9,17 +9,21 @@ class WFCConfig : public Resource {
 	GDCLASS(WFCConfig, Resource)
 
 protected:
+	uint32_t width;
+	uint32_t height;
 	int seed;
 	uint8_t dimensions;
+	uint8_t pattern_size;
 	BoundaryCondition boundary_condition;
 	CellSelectionStrategy cell_selection_strategy;
-	uint8_t pattern_size;
 	bool force_boundary_patterns;
 
 	static void _bind_methods();
 
 public:
 	WFCConfig() {
+		width = 128;
+		height = 128;
 		seed = -1;
 		dimensions = 2;
 		boundary_condition = BoundaryCondition::NONE;
@@ -47,6 +51,12 @@ public:
 
 	uint8_t get_pattern_size() const { return pattern_size; }
 	void set_pattern_size(uint8_t p_pattern_size) { pattern_size = p_pattern_size; }
+
+	uint32_t get_width() const { return width; }
+	void set_width(uint32_t p_width) { width = p_width; }
+
+	uint32_t get_height() const { return height; }
+	void set_height(uint32_t p_height) { height = p_height; }
 
 	bool get_force_boundary_patterns() const { return force_boundary_patterns; }
 	void set_force_boundary_patterns(bool p_force_boundary_patterns) {

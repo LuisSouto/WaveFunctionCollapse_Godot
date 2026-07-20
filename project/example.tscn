@@ -1,6 +1,15 @@
 [gd_scene format=3 uid="uid://dh0oj81pufivs"]
 
 [ext_resource type="Script" uid="uid://bkwk40ybs8kgm" path="res://example.gd" id="1_jdh55"]
+[ext_resource type="WFCConfig" uid="uid://d2rjo07g2f0ic" path="res://Resources/standard_wfc_config.tres" id="2_n51mc"]
+[ext_resource type="Texture2D" uid="uid://jgqw21b0cwd7" path="res://Sprites/Circle.png" id="3_8lvy3"]
 
 [node name="Node" type="Node" unique_id=260730319]
 script = ExtResource("1_jdh55")
+
+[node name="InputSample" type="Sprite2D" parent="." unique_id=872052494]
+texture = ExtResource("3_8lvy3")
+
+[node name="WFC" type="WFC" parent="." unique_id=1188099501 node_paths=PackedStringArray("input_sprite")]
+config = ExtResource("2_n51mc")
+input_sprite = NodePath("../InputSample")

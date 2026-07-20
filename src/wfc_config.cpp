@@ -23,6 +23,10 @@ void WFCConfig::_bind_methods() {
 			D_METHOD("get_force_boundary_patterns"), &WFCConfig::get_force_boundary_patterns);
 	ClassDB::bind_method(D_METHOD("set_force_boundary_patterns", "force_boundary_patterns"),
 			&WFCConfig::set_force_boundary_patterns);
+	ClassDB::bind_method(D_METHOD("get_width"), &WFCConfig::get_width);
+	ClassDB::bind_method(D_METHOD("set_width", "width"), &WFCConfig::set_width);
+	ClassDB::bind_method(D_METHOD("get_height"), &WFCConfig::get_height);
+	ClassDB::bind_method(D_METHOD("set_height", "height"), &WFCConfig::set_height);
 
 	// Bind enums
 	BIND_ENUM_CONSTANT(BoundaryCondition::NONE);
@@ -46,4 +50,8 @@ void WFCConfig::_bind_methods() {
 			PropertyInfo(Variant::INT, "pattern_size"), "set_pattern_size", "get_pattern_size");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "force_boundary_patterns"),
 			"set_force_boundary_patterns", "get_force_boundary_patterns");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "width", PROPERTY_HINT_RANGE, "1,1024,1"), "set_width",
+			"get_width");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "height", PROPERTY_HINT_RANGE, "1,1024,1"),
+			"set_height", "get_height");
 }
