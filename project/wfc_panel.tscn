@@ -1,0 +1,198 @@
+[gd_scene format=3 uid="uid://35lmlpsqlr5x"]
+
+[ext_resource type="Shader" uid="uid://1xqvtgrc3tq6" path="res://shaders/texture_grid.gdshader" id="1_dkerv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_osxwn"]
+corner_radius_top_left = 40
+corner_radius_top_right = 40
+corner_radius_bottom_right = 40
+corner_radius_bottom_left = 40
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kh127"]
+shader = ExtResource("1_dkerv")
+shader_parameter/grid_size = Vector2(128, 128)
+
+[node name="Control" type="Control" unique_id=879197506]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=317573899]
+self_modulate = Color(0, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_osxwn")
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=444164425]
+layout_mode = 2
+offset_transform_enabled = true
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer" unique_id=1566253512]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer" unique_id=1573141030]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="PanelContainer/MarginContainer/HBoxContainer/PanelContainer" unique_id=1500831428]
+material = SubResource("ShaderMaterial_kh127")
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/HBoxContainer/PanelContainer" unique_id=2023408983]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/HBoxContainer" unique_id=1142713934]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer" unique_id=132038521]
+layout_mode = 2
+columns = 3
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1667512354]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label2" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=755025893]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label3" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=503632969]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label4" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1346909342]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label5" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=40310617]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label6" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1845013590]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label7" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=650267004]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label8" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=895097018]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label9" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=533603916]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label10" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1072290280]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label11" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1781859615]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label12" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=747413646]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label13" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=2069459598]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label14" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=617032643]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label15" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=809348038]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label16" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=351248280]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label17" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1885652594]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label18" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1199622853]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label19" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1005412077]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label20" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1394378715]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label21" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=563938834]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label22" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=2089820454]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label23" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1259108579]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label24" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1550155952]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label25" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=736543200]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label26" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=398354302]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label27" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=906754856]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label28" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=460710505]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label29" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=457119023]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label30" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=318792230]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label31" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1404350305]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label32" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1031627911]
+layout_mode = 2
+text = "Some label"
+
+[node name="Label33" type="Label" parent="PanelContainer/MarginContainer/HBoxContainer/ScrollContainer/GridContainer" unique_id=1845628807]
+layout_mode = 2
+text = "Some label"
