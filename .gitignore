@@ -5,6 +5,8 @@
 # Clangd stuff
 .cache
 
+Sprites
+
 # Ignore build directories
 /build/
 

@@ -11,6 +11,9 @@
 using namespace godot;
 
 void WFC::_bind_methods() {
+	// Public methods
+	ClassDB::bind_method(D_METHOD("getPatternTextures"), &WFC::getPatternTextures);
+
 	// WFC settings
 	ClassDB::bind_method(D_METHOD("getConfig"), &WFC::getConfig);
 	ClassDB::bind_method(D_METHOD("setConfig", "p_config"), &WFC::setConfig);
@@ -27,15 +30,38 @@ void WFC::_bind_methods() {
 void WFC::_ready() {
 	if (input_sprite) {
 		convertInputSpriteToPixels();
-		std::vector<uint8_t> output_pixels = computeOutputPixels();
-		mapPixelsToTexture();
+		computeAdjacencyData();
+		initializeWFCCore();
 	}
-	this->set_visible(true);
 };
 
 Ref<WFCConfig> WFC::getConfig() const { return config; }
 
 void WFC::setConfig(const Ref<WFCConfig> &p_config) { config = p_config; }
+
+TypedArray<Texture2D> WFC::getPatternTextures() {
+	TypedArray<Texture2D> texture_list;
+
+	const auto &patterns = overlapping_patterns->getInputPixelPatterns();
+	size_t N = config->get_pattern_size();
+	size_t pattern_size = N * N * 4; // Assuming RGBA
+	size_t num_patterns = patterns.size() / pattern_size;
+
+	for (size_t i = 0; i < num_patterns; ++i) {
+		PackedByteArray buffer;
+		buffer.resize(pattern_size);
+		memcpy(buffer.ptrw(), &patterns[i * pattern_size], pattern_size);
+
+		// We need to convert to image before creating a texture
+		Ref<Image> image = Image::create_from_data(N, N, false, Image::FORMAT_RGBA8, buffer);
+
+		Ref<Texture2D> texture = ImageTexture::create_from_image(image);
+
+		texture_list.append(texture);
+	}
+
+	return texture_list;
+}
 
 void WFC::convertInputSpriteToPixels() {
 	if (!input_sprite) {
@@ -64,28 +90,49 @@ void WFC::convertInputSpriteToPixels() {
 
 	// Create a vector to hold the pixel data
 	std::vector<uint8_t> pixel_vector(pixels, pixels + pixel_data.size());
-	sprite_holder = new SpriteHolder(width, height, 4, std::move(pixel_vector));
+	sprite_holder = std::make_unique<SpriteHolder>(width, height, 4, std::move(pixel_vector));
 }
 
-std::vector<uint8_t> WFC::computeOutputPixels() {
+void WFC::computeAdjacencyData() {
 	if (!sprite_holder) {
 		ERR_PRINT("SpriteHolder is null. Please call convertInputSpriteToPixels() first.");
-		return std::vector<uint8_t>();
+		return;
 	}
 
 	// Create an instance of OverlappingPatterns
-	OverlappingPatterns overlapping_patterns(*sprite_holder, config->get_pattern_size());
+	overlapping_patterns = std::make_unique<OverlappingPatterns>(
+			*sprite_holder, config->get_pattern_size(), config->get_boundary_condition());
+}
 
-	// Solve the WFC problem
+void WFC::initializeWFCCore() {
+	if (!overlapping_patterns) {
+		ERR_PRINT("OverlappingPatterns is null. Please call computeAdjacencyData() first.");
+		return;
+	}
+
+	// If seed is negative use a random seed
+	int seed = config->get_seed();
+	if (seed < 0) {
+		seed = std::chrono::system_clock::now().time_since_epoch().count();
+	}
+
+	wfc_core = std::make_unique<WFCCore>(overlapping_patterns->getAdjacencyData(), seed);
+}
+
+std::vector<uint8_t> WFC::computeOutputPixels() {
+	if (!wfc_core) {
+		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
+		return {};
+	}
+
 	size_t adj_width = config->get_width() - config->get_pattern_size() + 1;
 	size_t adj_height = config->get_height() - config->get_pattern_size() + 1;
-	WFCCore wfc_core(overlapping_patterns.getAdjacencyData(), config->get_seed());
-	std::span<const pattern_id_t> collapsed_patterns =
-			wfc_core.solve(adj_width, adj_height, 0, config->get_force_boundary_patterns(),
-					config->get_cell_selection_strategy(), config->get_boundary_condition());
+
+	std::span<const pattern_id_t> collapsed_patterns = wfc_core->solve(adj_width, adj_height, 0,
+			config->get_force_boundary_patterns(), config->get_cell_selection_strategy());
 
 	// Convert the collapsed patterns back to pixel data
-	return overlapping_patterns.convertIdsToPixels(collapsed_patterns, adj_width, adj_height);
+	return overlapping_patterns->convertIdsToPixels(collapsed_patterns, adj_width, adj_height);
 }
 
 void WFC::mapPixelsToTexture() {
