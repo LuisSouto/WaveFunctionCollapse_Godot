@@ -5,7 +5,9 @@ class_name WFCPanel
 @onready var wfc_solver: WFC = $"WFC"
 @onready var list_pattern_textures: GridContainer = $"MainWindow/WindowMargins/HBoxContainer/ScrollContainer/PatternTextures"
 @onready var highlight_texture: ColorRect = $"MainWindow/WindowMargins/HBoxContainer/PanelContainer/HighlightTexture"
+
 @export var input_pattern_scene: PackedScene 
+var selected_panel: InputPattern
 
 func _ready():
 	var pattern_textures: Array[Texture2D] = wfc_solver.getPatternTextures()
@@ -18,8 +20,14 @@ func _ready():
 		texture_panel.set_texture(texture)
 		pattern_id += 1
 
-func on_pattern_selected(pattern_id: int) -> void:
-	var highlight_map: Texture2D = wfc_solver.validCellsForPattern(pattern_id)
+func on_pattern_selected(panel: InputPattern) -> void:
+	if selected_panel:
+		selected_panel.unhighlight()
 
+	selected_panel = panel
+	selected_panel.highlight()
+	
+	var highlight_map: Texture2D = wfc_solver.validCellsForPattern(panel.pattern_id)
 	highlight_texture.material.set_shader_parameter("highlight_map", highlight_map)
 	highlight_texture.visible = true
+
