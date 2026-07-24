@@ -2,3 +2,6 @@
 
 [resource]
 pattern_size = 2
+force_boundary_patterns = true
+width = 64
+height = 64

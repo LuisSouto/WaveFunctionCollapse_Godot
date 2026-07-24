@@ -41,4 +41,6 @@ public:
 	void setInputSprite(Sprite2D *p_input_sprite) { input_sprite.reset(p_input_sprite); }
 
 	TypedArray<Texture2D> getPatternTextures();
+
+	Ref<Texture2D> validCellsForPattern(pattern_id_t pattern_id);
 };

@@ -13,6 +13,8 @@ using namespace godot;
 void WFC::_bind_methods() {
 	// Public methods
 	ClassDB::bind_method(D_METHOD("getPatternTextures"), &WFC::getPatternTextures);
+	ClassDB::bind_method(
+			D_METHOD("validCellsForPattern", "pattern_id"), &WFC::validCellsForPattern);
 
 	// WFC settings
 	ClassDB::bind_method(D_METHOD("getConfig"), &WFC::getConfig);
@@ -61,6 +63,28 @@ TypedArray<Texture2D> WFC::getPatternTextures() {
 	}
 
 	return texture_list;
+}
+
+Ref<Texture2D> WFC::validCellsForPattern(pattern_id_t pattern_id) {
+	if (!wfc_core) {
+		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
+		return Ref<Texture2D>();
+	}
+
+	std::vector<uint8_t> valid_cells = wfc_core->getValidCellsForPattern(
+			pattern_id, config->get_width(), config->get_height());
+	PackedByteArray valid_cells_array;
+	valid_cells_array.resize(valid_cells.size());
+	memcpy(valid_cells_array.ptrw(), valid_cells.data(), valid_cells.size());
+
+	// Create a Godot Image from the valid cells data
+	Ref<Image> valid_cells_image = Image::create_from_data(
+			config->get_width(), config->get_height(), false, Image::FORMAT_L8, valid_cells_array);
+
+	// Create a new Texture2D based on the image
+	Ref<Texture2D> valid_cells_texture = ImageTexture::create_from_image(valid_cells_image);
+
+	return valid_cells_texture;
 }
 
 void WFC::convertInputSpriteToPixels() {
@@ -116,7 +140,10 @@ void WFC::initializeWFCCore() {
 		seed = std::chrono::system_clock::now().time_since_epoch().count();
 	}
 
+	size_t pattern_size = config->get_pattern_size();
 	wfc_core = std::make_unique<WFCCore>(overlapping_patterns->getAdjacencyData(), seed);
+	wfc_core->prepareWFCSolver(config->get_width() - pattern_size + 1,
+			config->get_height() - pattern_size + 1, config->get_force_boundary_patterns());
 }
 
 std::vector<uint8_t> WFC::computeOutputPixels() {
