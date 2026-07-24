@@ -3,13 +3,24 @@ extends Control
 class_name WFCPanel
 
 @onready var wfc_solver: WFC = $"WFC"
-@onready var list_pattern_textures: GridContainer = $"MainWindow/WindowMargins/HBoxContainer/ScrollContainer/PatternTextures"
-@onready var highlight_texture: ColorRect = $"MainWindow/WindowMargins/HBoxContainer/PanelContainer/HighlightTexture"
+@onready var list_pattern_textures: GridContainer = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/ScrollContainer/PatternTextures"
+@onready var image_container: ImageContainer = $"MainWindow/WindowMargins/HBoxContainer/ImageContainer"
 
 @export var input_pattern_scene: PackedScene 
 var selected_panel: InputPattern
+var width: int
+var height: int
 
 func _ready():
+	width = wfc_solver.config.width
+	height = wfc_solver.config.height
+	image_container.resize_textures(Vector2(width, height))
+	image_container.pixel_clicked.connect(on_pixel_clicked)
+	image_container.image_texture.set_texture(wfc_solver.texture)
+
+	display_input_patterns()
+
+func display_input_patterns() -> void:
 	var pattern_textures: Array[Texture2D] = wfc_solver.getPatternTextures()
 	var pattern_id: int = 0
 	for texture in pattern_textures:
@@ -26,8 +37,16 @@ func on_pattern_selected(panel: InputPattern) -> void:
 
 	selected_panel = panel
 	selected_panel.highlight()
-	
-	var highlight_map: Texture2D = wfc_solver.validCellsForPattern(panel.pattern_id)
-	highlight_texture.material.set_shader_parameter("highlight_map", highlight_map)
-	highlight_texture.visible = true
 
+	generate_highlight_map()
+
+func generate_highlight_map() -> void:
+	if selected_panel:
+		var highlight_map: Texture2D = wfc_solver.validCellsForPattern(selected_panel.pattern_id)
+		image_container.highlight_texture.material.set_shader_parameter("highlight_map", highlight_map)
+		image_container.highlight_texture.visible = true
+
+func on_pixel_clicked(pixel_pos: Vector2i) -> void:
+	if selected_panel:
+		wfc_solver.setPatternAtPosition(pixel_pos, selected_panel.pattern_id)
+		generate_highlight_map()

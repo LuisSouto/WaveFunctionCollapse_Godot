@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://b52vc3vm4renk"]
+
+[ext_resource type="Script" uid="uid://bdnlmjsyl77le" path="res://scripts/image_container.gd" id="1_md8kf"]
+[ext_resource type="Shader" uid="uid://1xqvtgrc3tq6" path="res://shaders/texture_grid.gdshader" id="1_tjlp2"]
+[ext_resource type="Shader" uid="uid://dkjys846kuqde" path="res://shaders/highlight_shader.gdshader" id="2_memi3"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_s3g0x"]
+shader = ExtResource("1_tjlp2")
+shader_parameter/grid_size = Vector2(0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_md8kf"]
+shader = ExtResource("2_memi3")
+
+[node name="ImageContainer" type="PanelContainer" unique_id=464863355]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+script = ExtResource("1_md8kf")
+
+[node name="EmptyTexture" type="ColorRect" parent="." unique_id=148057167]
+material = SubResource("ShaderMaterial_s3g0x")
+layout_mode = 2
+
+[node name="HighlightTexture" type="ColorRect" parent="." unique_id=916586356]
+visible = false
+material = SubResource("ShaderMaterial_md8kf")
+layout_mode = 2
+color = Color(1, 1, 1, 0)
+
+[node name="ImageTexture" type="TextureRect" parent="." unique_id=2122848710]
+texture_filter = 1
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.0
