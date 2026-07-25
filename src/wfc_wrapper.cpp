@@ -17,6 +17,7 @@ void WFC::_bind_methods() {
 			D_METHOD("validCellsForPattern", "pattern_id"), &WFC::validCellsForPattern);
 	ClassDB::bind_method(D_METHOD("setPatternAtPosition", "cell_index", "pattern_id"),
 			&WFC::setPatternAtPosition);
+	ClassDB::bind_method(D_METHOD("autocompleteImage"), &WFC::autocompleteImage);
 
 	// WFC settings
 	ClassDB::bind_method(D_METHOD("getConfig"), &WFC::getConfig);
@@ -29,6 +30,30 @@ void WFC::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("setInputSprite", "p_input_sprite"), &WFC::setInputSprite);
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "input_sprite", PROPERTY_HINT_NODE_TYPE, "Sprite2D"),
 			"setInputSprite", "getInputSprite");
+}
+
+void WFC::autocompleteImage() {
+	std::vector<uint8_t> output_pixels = computeOutputPixels();
+	if (output_pixels.empty()) {
+		ERR_PRINT("Output pixels are empty. Please ensure that the WFC process completed "
+				  "successfully.");
+		return;
+	}
+
+	int output_width = config->get_width();
+	int output_height = config->get_height();
+
+	// Transform pixel data to Godot packed array
+	std::copy(output_pixels.begin(), output_pixels.end(), pixel_data.ptrw());
+
+	// Create a Godot Image from the packed data
+	output_image->set_data(output_width, output_height, false, Image::FORMAT_RGBA8, pixel_data);
+
+	// Create a new Texture2D based on the image
+	output_texture->update(output_image);
+
+	// Set the texture to the Sprite2D
+	this->set_texture(output_texture);
 }
 
 void WFC::_ready() {
@@ -94,13 +119,20 @@ Ref<Texture2D> WFC::validCellsForPattern(pattern_id_t pattern_id) {
 	return valid_cells_texture;
 }
 
-void WFC::setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id) {
+bool WFC::setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id) {
 	if (!wfc_core) {
 		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
-		return;
+		return false;
 	}
-	size_t cell_index =
-			cell_pos.x + cell_pos.y * (config->get_width() - config->get_pattern_size() + 1);
+	size_t adj_width = config->get_width() - config->get_pattern_size() + 1;
+	size_t adj_height = config->get_height() - config->get_pattern_size() + 1;
+	if (cell_pos.x >= static_cast<int>(adj_width) || cell_pos.y >= static_cast<int>(adj_height)) {
+		ERR_PRINT("Cell position is out of bounds.");
+		return false;
+	}
+
+	size_t cell_index = cell_pos.x + cell_pos.y * adj_width;
+	fixed_cells[cell_index] = pattern_id;
 
 	bool success = wfc_core->collapseSelectedCell(cell_index, pattern_id);
 	if (success) {
@@ -111,16 +143,17 @@ void WFC::setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id
 			for (size_t dx = 0; dx < config->get_pattern_size(); ++dx) {
 				size_t pixel_index = (dy * config->get_pattern_size() + dx) * 4;
 				size_t output_index = start_index + (dy * config->get_width() + dx) * 4;
-				uint8_t *write_ptr = output_pixels.ptrw();
+				uint8_t *write_ptr = pixel_data.ptrw();
 				memcpy(write_ptr + output_index, &pattern_pixels[pixel_index], 4);
 			}
 		}
 		// Update the output texture with the new pixel data
-		output_image->set_data(config->get_width(), config->get_height(), false,
-				Image::FORMAT_RGBA8, output_pixels);
+		output_image->set_data(
+				config->get_width(), config->get_height(), false, Image::FORMAT_RGBA8, pixel_data);
 		output_texture->update(output_image);
 		this->set_texture(output_texture);
 	}
+	return success;
 }
 
 void WFC::convertInputSpriteToPixels() {
@@ -179,8 +212,9 @@ void WFC::initializeWFCCore() {
 
 	size_t pattern_size = config->get_pattern_size();
 	wfc_core = std::make_unique<WFCCore>(overlapping_patterns->getAdjacencyData(), seed);
-	wfc_core->prepareWFCSolver(config->get_width() - pattern_size + 1,
-			config->get_height() - pattern_size + 1, config->get_force_boundary_patterns());
+	wfc_core->startSolver(config->get_width() - pattern_size + 1,
+			config->get_height() - pattern_size + 1, config->get_force_boundary_patterns(),
+			fixed_cells);
 }
 
 void WFC::initializeOutputTexture() {
@@ -191,13 +225,13 @@ void WFC::initializeOutputTexture() {
 
 	int output_width = config->get_width();
 	int output_height = config->get_height();
-	output_pixels = PackedByteArray(); // Assuming RGBA
-	output_pixels.resize(output_width * output_height * 4);
-	output_pixels.fill(0); // Initialize with zeros
+	pixel_data = PackedByteArray(); // Assuming RGBA
+	pixel_data.resize(output_width * output_height * 4);
+	pixel_data.fill(0); // Initialize with zeros
 
 	// Create a new Image with the specified dimensions and format
 	output_image = Image::create_from_data(
-			output_width, output_height, false, Image::FORMAT_RGBA8, output_pixels);
+			output_width, output_height, false, Image::FORMAT_RGBA8, pixel_data);
 
 	// Create a new Texture2D based on the image
 	output_texture = ImageTexture::create_from_image(output_image);
@@ -215,36 +249,10 @@ std::vector<uint8_t> WFC::computeOutputPixels() {
 	size_t adj_width = config->get_width() - config->get_pattern_size() + 1;
 	size_t adj_height = config->get_height() - config->get_pattern_size() + 1;
 
-	std::span<const pattern_id_t> collapsed_patterns = wfc_core->solve(adj_width, adj_height, 0,
-			config->get_force_boundary_patterns(), config->get_cell_selection_strategy());
+	std::span<const pattern_id_t> collapsed_patterns =
+			wfc_core->solve(adj_width, adj_height, 0, config->get_force_boundary_patterns(),
+					config->get_cell_selection_strategy(), fixed_cells);
 
 	// Convert the collapsed patterns back to pixel data
 	return overlapping_patterns->convertIdsToPixels(collapsed_patterns, adj_width, adj_height);
-}
-
-void WFC::mapPixelsToTexture() {
-	std::vector<uint8_t> output_pixels = computeOutputPixels();
-	if (output_pixels.empty()) {
-		ERR_PRINT("Output pixels are empty. Please ensure that the WFC process completed "
-				  "successfully.");
-		return;
-	}
-
-	int output_width = config->get_width();
-	int output_height = config->get_height();
-
-	// Transform pixel data to Godot packed array
-	PackedByteArray pixel_data;
-	pixel_data.resize(output_pixels.size());
-	std::copy(output_pixels.begin(), output_pixels.end(), pixel_data.ptrw());
-
-	// Create a Godot Image from the packed data
-	Ref<Image> output_image = Image::create_from_data(
-			output_width, output_height, false, Image::FORMAT_RGBA8, pixel_data);
-
-	// Create a new Texture2D based on the image
-	Ref<Texture2D> output_texture = ImageTexture::create_from_image(output_image);
-
-	// Set the texture to the Sprite2D
-	this->set_texture(output_texture);
 }

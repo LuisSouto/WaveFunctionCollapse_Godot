@@ -4,10 +4,13 @@
 #include "godot_cpp/classes/sprite2d.hpp"
 #include "overlapping_patterns.h"
 #include "sprite_holder.h"
+#include "wfc_typedefs.h"
 #include <sprite_reader.h>
 #include <wfc_config.h>
 #include <wfc_core.h>
+#include <cstddef>
 #include <memory>
+#include <unordered_map>
 
 using namespace godot;
 
@@ -15,7 +18,8 @@ class WFC : public Sprite2D {
 	GDCLASS(WFC, Sprite2D)
 
 protected:
-	PackedByteArray output_pixels;
+	std::unordered_map<size_t, pattern_id_t> fixed_cells = {};
+	PackedByteArray pixel_data;
 	std::vector<uint8_t> input_patterns_as_pixels;
 	Ref<WFCConfig> config;
 	Sprite2D *input_sprite = nullptr;
@@ -30,7 +34,6 @@ protected:
 	void initializeWFCCore();
 	void initializeOutputTexture();
 	std::vector<uint8_t> computeOutputPixels();
-	void mapPixelsToTexture();
 
 public:
 	WFC() = default;
@@ -48,5 +51,7 @@ public:
 
 	Ref<Texture2D> validCellsForPattern(pattern_id_t pattern_id);
 
-	void setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id);
+	bool setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id);
+
+	void autocompleteImage();
 };

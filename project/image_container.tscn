@@ -20,12 +20,7 @@ script = ExtResource("1_md8kf")
 [node name="EmptyTexture" type="ColorRect" parent="." unique_id=148057167]
 material = SubResource("ShaderMaterial_s3g0x")
 layout_mode = 2
-
-[node name="HighlightTexture" type="ColorRect" parent="." unique_id=916586356]
-visible = false
-material = SubResource("ShaderMaterial_md8kf")
-layout_mode = 2
-color = Color(1, 1, 1, 0)
+mouse_filter = 1
 
 [node name="ImageTexture" type="TextureRect" parent="." unique_id=2122848710]
 texture_filter = 1
@@ -33,3 +28,10 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.0
+
+[node name="HighlightTexture" type="ColorRect" parent="." unique_id=916586356]
+visible = false
+material = SubResource("ShaderMaterial_md8kf")
+layout_mode = 2
+mouse_filter = 1
+color = Color(1, 1, 1, 0)

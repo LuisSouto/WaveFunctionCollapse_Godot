@@ -16,8 +16,15 @@ func resize_textures(new_size: Vector2) -> void:
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		var local_mouse_pos: Vector2 = image_texture.get_local_mouse_position()
-		var pixel_pos: Vector2i = get_pixel_position(local_mouse_pos)
-		emit_signal("pixel_clicked", pixel_pos)
+		notify_pixel_clicked(local_mouse_pos)
+
+	if event is InputEventMouseMotion and event.button_mask & MOUSE_BUTTON_MASK_LEFT:
+		var local_mouse_pos: Vector2 = image_texture.get_local_mouse_position()
+		notify_pixel_clicked(local_mouse_pos)
+
+func notify_pixel_clicked(grid_pos: Vector2) -> void:
+	var pixel_pos: Vector2i = get_pixel_position(grid_pos)
+	emit_signal("pixel_clicked", pixel_pos)
 
 func get_pixel_position(local_pos: Vector2) -> Vector2i:
 	var normalized_pos: Vector2 = local_pos / self.size
