@@ -17,7 +17,8 @@ func _ready():
 	width = wfc_solver.config.width
 	height = wfc_solver.config.height
 	image_container.resize_textures(Vector2(width, height))
-	image_container.pixel_clicked.connect(on_pixel_clicked)
+	image_container.pixel_clicked_draw.connect(on_pixel_clicked_draw)
+	image_container.pixel_clicked_erase.connect(on_pixel_clicked_erase)
 	image_container.image_texture.set_texture(wfc_solver.texture)
 
 	# Connect action button and add shortcuts
@@ -51,10 +52,14 @@ func generate_highlight_map() -> void:
 		image_container.highlight_texture.material.set_shader_parameter("highlight_map", highlight_map)
 		image_container.highlight_texture.visible = true
 
-func on_pixel_clicked(pixel_pos: Vector2i) -> void:
+func on_pixel_clicked_draw(pixel_pos: Vector2i) -> void:
 	if selected_panel:			
 		var success: bool = wfc_solver.setPatternAtPosition(pixel_pos, selected_panel.pattern_id)
 		generate_highlight_map()
+
+func on_pixel_clicked_erase(pixel_pos: Vector2i) -> void:
+	var success: bool = wfc_solver.erasePatternAtPosition(pixel_pos)
+	generate_highlight_map()
 
 func on_actions_button_id_pressed(id: int) -> void:
 	match id:

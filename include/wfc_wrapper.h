@@ -28,18 +28,22 @@ protected:
 	std::unique_ptr<SpriteHolder> sprite_holder = nullptr;
 	std::unique_ptr<WFCCore> wfc_core = nullptr;
 	std::unique_ptr<OverlappingPatterns> overlapping_patterns = nullptr;
+
 	static void _bind_methods();
 	void convertInputSpriteToPixels();
 	void computeAdjacencyData();
 	void initializeWFCCore();
 	void initializeOutputTexture();
 	std::vector<uint8_t> computeOutputPixels();
+	void mapPixelsToTexture(const std::vector<uint8_t> &pixels);
 
 public:
 	WFC() = default;
 	~WFC() override = default;
 
 	void autocompleteImage();
+
+	bool erasePatternAtPosition(const Vector2i &cell_pos);
 
 	void _ready() override;
 

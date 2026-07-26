@@ -2,7 +2,9 @@ extends PanelContainer
 
 class_name ImageContainer
 
-signal pixel_clicked(pixel_pos: Vector2i)
+signal pixel_clicked_draw(pixel_pos: Vector2i)
+signal pixel_clicked_erase(pixel_pos: Vector2i)
+
 
 @onready var empty_texture: ColorRect = $"EmptyTexture"
 @onready var highlight_texture: ColorRect = $"HighlightTexture"
@@ -22,9 +24,21 @@ func _gui_input(event: InputEvent) -> void:
 		var local_mouse_pos: Vector2 = image_texture.get_local_mouse_position()
 		notify_pixel_clicked(local_mouse_pos)
 
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+		var local_mouse_pos: Vector2 = image_texture.get_local_mouse_position()
+		notify_pixel_clicked_erase(local_mouse_pos)
+
+	if event is InputEventMouseMotion and event.button_mask & MOUSE_BUTTON_MASK_RIGHT:
+		var local_mouse_pos: Vector2 = image_texture.get_local_mouse_position()
+		notify_pixel_clicked_erase(local_mouse_pos)
+
 func notify_pixel_clicked(grid_pos: Vector2) -> void:
 	var pixel_pos: Vector2i = get_pixel_position(grid_pos)
-	emit_signal("pixel_clicked", pixel_pos)
+	pixel_clicked_draw.emit(pixel_pos)
+
+func notify_pixel_clicked_erase(grid_pos: Vector2) -> void:
+	var pixel_pos: Vector2i = get_pixel_position(grid_pos)
+	pixel_clicked_erase.emit(pixel_pos)
 
 func get_pixel_position(local_pos: Vector2) -> Vector2i:
 	var normalized_pos: Vector2 = local_pos / self.size

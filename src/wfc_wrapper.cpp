@@ -7,6 +7,7 @@
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/classes/texture2d.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <vector>
 
 using namespace godot;
 
@@ -18,20 +19,7 @@ void WFC::autocompleteImage() {
 		return;
 	}
 
-	int output_width = config->get_width();
-	int output_height = config->get_height();
-
-	// Transform pixel data to Godot packed array
-	std::copy(output_pixels.begin(), output_pixels.end(), pixel_data.ptrw());
-
-	// Create a Godot Image from the packed data
-	output_image->set_data(output_width, output_height, false, Image::FORMAT_RGBA8, pixel_data);
-
-	// Create a new Texture2D based on the image
-	output_texture->update(output_image);
-
-	// Set the texture to the Sprite2D
-	this->set_texture(output_texture);
+	mapPixelsToTexture(output_pixels);
 }
 
 void WFC::_bind_methods() {
@@ -43,6 +31,8 @@ void WFC::_bind_methods() {
 			&WFC::setPatternAtPosition);
 	ClassDB::bind_method(D_METHOD("autocompleteImage"), &WFC::autocompleteImage);
 	ClassDB::bind_method(D_METHOD("resetImage"), &WFC::resetImage);
+	ClassDB::bind_method(
+			D_METHOD("erasePatternAtPosition", "cell_pos"), &WFC::erasePatternAtPosition);
 
 	// WFC settings
 	ClassDB::bind_method(D_METHOD("getConfig"), &WFC::getConfig);
@@ -116,6 +106,40 @@ void WFC::convertInputSpriteToPixels() {
 	sprite_holder = std::make_unique<SpriteHolder>(width, height, 4, std::move(pixel_vector));
 }
 
+bool WFC::erasePatternAtPosition(const Vector2i &cell_pos) {
+	if (!wfc_core) {
+		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
+		return false;
+	}
+	size_t adj_width = config->get_width() - config->get_pattern_size() + 1;
+	size_t adj_height = config->get_height() - config->get_pattern_size() + 1;
+	if (cell_pos.x >= static_cast<int>(adj_width) || cell_pos.y >= static_cast<int>(adj_height)) {
+		return false; // out of bounds
+	}
+
+	size_t cell_index = cell_pos.x + cell_pos.y * adj_width;
+	if (!wfc_core->checkIfCellCollapsed(cell_index)) {
+		return false;
+	}
+
+	// It's easier to just reset the entire grid and add the remaining fixed cells one by one
+	fixed_cells.erase(cell_index);
+	pixel_data.fill(0);
+	output_image->set_data(
+			config->get_width(), config->get_height(), false, Image::FORMAT_RGBA8, pixel_data);
+	output_texture->update(output_image);
+
+	// Do not add the fixed cells yet or the texture won't be updated
+	wfc_core->startSolver(adj_width, adj_height, config->get_force_boundary_patterns(), {});
+
+	for (auto &[cell_index, pattern_id] : fixed_cells) {
+		Vector2i cell_pos(cell_index % adj_width, cell_index / adj_width);
+		setPatternAtPosition(cell_pos, pattern_id);
+	}
+
+	return true;
+}
+
 void WFC::initializeOutputTexture() {
 	if (!wfc_core) {
 		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
@@ -156,6 +180,24 @@ void WFC::initializeWFCCore() {
 	wfc_core->startSolver(config->get_width() - pattern_size + 1,
 			config->get_height() - pattern_size + 1, config->get_force_boundary_patterns(),
 			fixed_cells);
+}
+
+void WFC::mapPixelsToTexture(const std::vector<uint8_t> &pixels) {
+	if (pixels.empty()) {
+		ERR_PRINT("Pixel data is empty. Cannot map to texture.");
+		return;
+	}
+
+	int output_width = config->get_width();
+	int output_height = config->get_height();
+
+	memcpy(pixel_data.ptrw(), pixels.data(), pixels.size());
+
+	output_image->set_data(output_width, output_height, false, Image::FORMAT_RGBA8, pixel_data);
+
+	output_texture->update(output_image);
+
+	this->set_texture(output_texture);
 }
 
 void WFC::_ready() {
@@ -223,15 +265,14 @@ bool WFC::setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id
 	size_t adj_width = config->get_width() - config->get_pattern_size() + 1;
 	size_t adj_height = config->get_height() - config->get_pattern_size() + 1;
 	if (cell_pos.x >= static_cast<int>(adj_width) || cell_pos.y >= static_cast<int>(adj_height)) {
-		ERR_PRINT("Cell position is out of bounds.");
 		return false;
 	}
 
 	size_t cell_index = cell_pos.x + cell_pos.y * adj_width;
-	fixed_cells[cell_index] = pattern_id;
 
 	bool success = wfc_core->collapseSelectedCell(cell_index, pattern_id);
 	if (success) {
+		fixed_cells[cell_index] = pattern_id;
 		std::vector<uint8_t> pattern_pixels =
 				overlapping_patterns->convertIdsToPixels({ &pattern_id, 1 }, 1, 1);
 		size_t start_index = (cell_pos.y * config->get_width() + cell_pos.x) * 4;
@@ -239,8 +280,7 @@ bool WFC::setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id
 			for (size_t dx = 0; dx < config->get_pattern_size(); ++dx) {
 				size_t pixel_index = (dy * config->get_pattern_size() + dx) * 4;
 				size_t output_index = start_index + (dy * config->get_width() + dx) * 4;
-				uint8_t *write_ptr = pixel_data.ptrw();
-				memcpy(write_ptr + output_index, &pattern_pixels[pixel_index], 4);
+				memcpy(pixel_data.ptrw() + output_index, &pattern_pixels[pixel_index], 4);
 			}
 		}
 		// Update the output texture with the new pixel data
