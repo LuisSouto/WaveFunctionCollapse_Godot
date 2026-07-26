@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://b6pe8voglfhkr"]
+
+[ext_resource type="Script" uid="uid://bko2ps17n8qv3" path="res://scripts/actions_menu.gd" id="1_80mp5"]
+
+[node name="ActionsMenu" type="MenuButton" unique_id=189126386]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Actions"
+item_count = 3
+popup/item_0/text = "Autocomplete"
+popup/item_0/id = 0
+popup/item_1/text = "Reset"
+popup/item_1/id = 1
+popup/item_2/text = "Undo"
+popup/item_2/id = 2
+script = ExtResource("1_80mp5")

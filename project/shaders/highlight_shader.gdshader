@@ -8,7 +8,7 @@ void fragment() {
   float is_highlighted = texelFetch(highlight_map, grid_pos, 0).r;
 
   if (is_highlighted > 0.0) {
-			COLOR = vec4(1.0, 1.0, 0.0, 0.6); // Apply highlight
+			COLOR = vec4(1.0, 1.0, 0.0, 0.4); // Apply highlight
 	}
 }
 

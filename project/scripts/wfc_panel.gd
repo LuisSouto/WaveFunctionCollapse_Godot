@@ -5,7 +5,7 @@ class_name WFCPanel
 @onready var wfc_solver: WFC = $"WFC"
 @onready var list_pattern_textures: GridContainer = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/ScrollContainer/PatternTextures"
 @onready var image_container: ImageContainer = $"MainWindow/WindowMargins/HBoxContainer/ImageContainer"
-@onready var autocomplete_button: Button = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/HBoxContainer/AutocompleteButton"
+@onready var actions_button: ActionsMenu = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/ActionsMenu"
 
 @export var input_pattern_scene: PackedScene 
 var selected_panel: InputPattern
@@ -13,12 +13,15 @@ var width: int
 var height: int
 
 func _ready():
+	# Initialize textures
 	width = wfc_solver.config.width
 	height = wfc_solver.config.height
 	image_container.resize_textures(Vector2(width, height))
 	image_container.pixel_clicked.connect(on_pixel_clicked)
 	image_container.image_texture.set_texture(wfc_solver.texture)
-	autocomplete_button.pressed.connect(on_autocomplete_pressed)
+
+	# Connect action button and add shortcuts
+	actions_button.get_popup().id_pressed.connect(on_actions_button_id_pressed)
 
 	display_input_patterns()
 
@@ -53,5 +56,12 @@ func on_pixel_clicked(pixel_pos: Vector2i) -> void:
 		var success: bool = wfc_solver.setPatternAtPosition(pixel_pos, selected_panel.pattern_id)
 		generate_highlight_map()
 
-func on_autocomplete_pressed() -> void:
-	wfc_solver.autocompleteImage()
+func on_actions_button_id_pressed(id: int) -> void:
+	match id:
+		ActionsMenu.ActionButtons.AUTOCOMPLETE:
+			image_container.highlight_texture.visible = false
+			wfc_solver.autocompleteImage()
+
+		ActionsMenu.ActionButtons.RESET:
+			image_container.highlight_texture.visible = false
+			wfc_solver.resetImage()

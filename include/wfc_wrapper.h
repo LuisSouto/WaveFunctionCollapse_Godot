@@ -39,9 +39,11 @@ public:
 	WFC() = default;
 	~WFC() override = default;
 
+	void autocompleteImage();
+
 	void _ready() override;
 
-	Ref<WFCConfig> getConfig() const;
+	Ref<WFCConfig> getConfig() const { return config; };
 	void setConfig(const Ref<WFCConfig> &p_config);
 
 	Sprite2D *getInputSprite() const { return input_sprite; }
@@ -49,9 +51,9 @@ public:
 
 	TypedArray<Texture2D> getPatternTextures();
 
-	Ref<Texture2D> validCellsForPattern(pattern_id_t pattern_id);
+	void resetImage();
 
 	bool setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id);
 
-	void autocompleteImage();
+	Ref<Texture2D> validCellsForPattern(pattern_id_t pattern_id);
 };
