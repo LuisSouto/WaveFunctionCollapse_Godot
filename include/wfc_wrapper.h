@@ -28,13 +28,15 @@ protected:
 	std::unique_ptr<SpriteHolder> sprite_holder = nullptr;
 	std::unique_ptr<WFCCore> wfc_core = nullptr;
 	std::unique_ptr<OverlappingPatterns> overlapping_patterns = nullptr;
+	size_t grid_width;
+	size_t grid_height;
 
 	static void _bind_methods();
 	void convertInputSpriteToPixels();
-	void computeAdjacencyData();
+	void generateOverlappingPatterns();
 	void initializeWFCCore();
 	void initializeOutputTexture();
-	std::vector<uint8_t> computeOutputPixels();
+	std::vector<uint8_t> generateOutputPixelImage();
 	void mapPixelsToTexture(const std::vector<uint8_t> &pixels);
 
 public:
@@ -48,7 +50,7 @@ public:
 	void _ready() override;
 
 	Ref<WFCConfig> getConfig() const { return config; };
-	void setConfig(const Ref<WFCConfig> &p_config);
+	void setConfig(const Ref<WFCConfig> &p_config) { config = p_config; };
 
 	Sprite2D *getInputSprite() const { return input_sprite; }
 	void setInputSprite(Sprite2D *p_input_sprite) { input_sprite = p_input_sprite; }

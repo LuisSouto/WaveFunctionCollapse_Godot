@@ -11,14 +11,14 @@ class_name WFCPanel
 
 @export var input_pattern_scene: PackedScene 
 var selected_panel: InputPattern
-var width: int
-var height: int
+var output_texture_width: int
+var output_texture_height: int
 
 func _ready():
 	# Initialize textures
-	width = wfc_solver.config.width
-	height = wfc_solver.config.height
-	image_container.resize_textures(Vector2(width, height))
+	output_texture_width = wfc_solver.config.width
+	output_texture_height = wfc_solver.config.height
+	image_container.resize_textures(Vector2(output_texture_width, output_texture_height))
 	image_container.image_texture.set_texture(wfc_solver.texture)
 
 	# Draw and erase pattern signals		

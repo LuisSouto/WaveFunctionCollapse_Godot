@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://b52vc3vm4renk" path="res://image_container.tscn" id="3_ddcd7"]
 [ext_resource type="PackedScene" uid="uid://b6pe8voglfhkr" path="res://actions_menu.tscn" id="4_vjnrn"]
 [ext_resource type="PackedScene" uid="uid://k7eugqffto2o" path="res://view_menu.tscn" id="5_6nxhc"]
-[ext_resource type="Texture2D" uid="uid://lvctqbtwncqi" path="res://Sprites/Sewers.png" id="5_u1o7l"]
 [ext_resource type="WFCConfig" uid="uid://d2rjo07g2f0ic" path="res://Resources/standard_wfc_config.tres" id="5_vjnrn"]
+[ext_resource type="Texture2D" uid="uid://ckmrkpbp3mg1c" path="res://Sprites/ColoredCity.png" id="6_u1o7l"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_osxwn"]
 corner_radius_top_left = 40
@@ -113,7 +113,7 @@ columns = 3
 
 [node name="InputSample" type="Sprite2D" parent="." unique_id=1021603267]
 visible = false
-texture = ExtResource("5_u1o7l")
+texture = ExtResource("6_u1o7l")
 
 [node name="WFC" type="WFC" parent="." unique_id=247466026 node_paths=PackedStringArray("input_sprite")]
 config = ExtResource("5_vjnrn")

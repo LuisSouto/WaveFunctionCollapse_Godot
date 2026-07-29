@@ -2,6 +2,7 @@
 #include <overlapping_patterns.h>
 #include <wfc_core.h>
 #include <wfc_wrapper.h>
+#include <cstdint>
 #include <godot_cpp/classes/image.hpp>
 #include <godot_cpp/classes/image_texture.hpp>
 #include <godot_cpp/classes/resource.hpp>
@@ -11,68 +12,95 @@
 
 using namespace godot;
 
+void WFC::_ready() {
+	if (config.is_null()) {
+		ERR_PRINT("WFC: Config resource is not assigned!");
+		return;
+	}
+	if (input_sprite != nullptr) {
+		convertInputSpriteToPixels();
+		generateOverlappingPatterns();
+		initializeWFCCore();
+		initializeOutputTexture();
+	}
+};
+
+void WFC::initializeOutputTexture() {
+	if (!wfc_core) {
+		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
+		return;
+	}
+
+	int output_width = config->get_width();
+	int output_height = config->get_height();
+	pixel_data = PackedByteArray();
+	pixel_data.resize(output_width * output_height * 4);
+	pixel_data.fill(0); // Start with a blank image
+
+	// Map pixels into texture
+	output_image = Image::create_from_data(
+			output_width, output_height, false, Image::FORMAT_RGBA8, pixel_data);
+
+	output_texture = ImageTexture::create_from_image(output_image);
+
+	this->set_texture(output_texture);
+}
+
 void WFC::autocompleteImage() {
-	std::vector<uint8_t> output_pixels = computeOutputPixels();
+	std::vector<uint8_t> output_pixels = generateOutputPixelImage();
 	if (output_pixels.empty()) {
-		ERR_PRINT("Output pixels are empty. Please ensure that the WFC process completed "
-				  "successfully.");
+		UtilityFunctions::print("WFC: Failed to generate output pixels. Please check the input "
+								"sprite and configuration.");
 		return;
 	}
 
 	mapPixelsToTexture(output_pixels);
 }
 
-void WFC::_bind_methods() {
-	// Public methods
-	ClassDB::bind_method(D_METHOD("getPatternTextures"), &WFC::getPatternTextures);
-	ClassDB::bind_method(
-			D_METHOD("validCellsForPattern", "pattern_id"), &WFC::validCellsForPattern);
-	ClassDB::bind_method(D_METHOD("setPatternAtPosition", "cell_index", "pattern_id"),
-			&WFC::setPatternAtPosition);
-	ClassDB::bind_method(D_METHOD("autocompleteImage"), &WFC::autocompleteImage);
-	ClassDB::bind_method(D_METHOD("resetImage"), &WFC::resetImage);
-	ClassDB::bind_method(
-			D_METHOD("erasePatternAtPosition", "cell_pos"), &WFC::erasePatternAtPosition);
-
-	// WFC settings
-	ClassDB::bind_method(D_METHOD("getConfig"), &WFC::getConfig);
-	ClassDB::bind_method(D_METHOD("setConfig", "p_config"), &WFC::setConfig);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "config", PROPERTY_HINT_RESOURCE_TYPE, "WFCConfig"),
-			"setConfig", "getConfig");
-
-	// Input sprite
-	ClassDB::bind_method(D_METHOD("getInputSprite"), &WFC::getInputSprite);
-	ClassDB::bind_method(D_METHOD("setInputSprite", "p_input_sprite"), &WFC::setInputSprite);
-	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "input_sprite", PROPERTY_HINT_NODE_TYPE, "Sprite2D"),
-			"setInputSprite", "getInputSprite");
-}
-
-void WFC::computeAdjacencyData() {
-	if (!sprite_holder) {
-		ERR_PRINT("SpriteHolder is null. Please call convertInputSpriteToPixels() first.");
-		return;
-	}
-
-	// Create an instance of OverlappingPatterns
-	overlapping_patterns = std::make_unique<OverlappingPatterns>(
-			*sprite_holder, config->get_pattern_size(), config->get_boundary_condition());
-}
-
-std::vector<uint8_t> WFC::computeOutputPixels() {
+std::vector<uint8_t> WFC::generateOutputPixelImage() {
 	if (!wfc_core) {
 		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
 		return {};
 	}
 
-	size_t adj_width = config->get_width() - config->get_pattern_size() + 1;
-	size_t adj_height = config->get_height() - config->get_pattern_size() + 1;
-
 	std::span<const pattern_id_t> collapsed_patterns =
-			wfc_core->solve(adj_width, adj_height, 0, config->get_force_boundary_patterns(),
+			wfc_core->solve(grid_width, grid_height, 0, config->get_force_boundary_patterns(),
 					config->get_cell_selection_strategy(), fixed_cells);
 
 	// Convert the collapsed patterns back to pixel data
-	return overlapping_patterns->convertIdsToPixels(collapsed_patterns, adj_width, adj_height);
+	return overlapping_patterns->convertIdsToPixels(collapsed_patterns, grid_width, grid_height);
+}
+
+void WFC::initializeWFCCore() {
+	if (!overlapping_patterns) {
+		ERR_PRINT("OverlappingPatterns is null. Please call generateOverlappingPatterns() first.");
+		return;
+	}
+
+	// If seed is negative use a random seed
+	uint64_t seed;
+	if (config->get_seed() < 0) {
+		seed = std::chrono::system_clock::now().time_since_epoch().count();
+	} else {
+		seed = static_cast<uint64_t>(config->get_seed());
+	}
+
+	size_t pattern_size = config->get_pattern_size();
+	grid_width = config->get_width() - pattern_size + 1;
+	grid_height = config->get_height() - pattern_size + 1;
+	wfc_core = std::make_unique<WFCCore>(overlapping_patterns->getAdjacencyData(), seed);
+	wfc_core->startSolver(
+			grid_width, grid_height, config->get_force_boundary_patterns(), fixed_cells);
+}
+
+void WFC::generateOverlappingPatterns() {
+	if (!sprite_holder) {
+		ERR_PRINT("SpriteHolder is null. Please call convertInputSpriteToPixels() first.");
+		return;
+	}
+
+	overlapping_patterns = std::make_unique<OverlappingPatterns>(
+			*sprite_holder, config->get_pattern_size(), config->get_boundary_condition());
 }
 
 void WFC::convertInputSpriteToPixels() {
@@ -106,18 +134,41 @@ void WFC::convertInputSpriteToPixels() {
 	sprite_holder = std::make_unique<SpriteHolder>(width, height, 4, std::move(pixel_vector));
 }
 
+void WFC::_bind_methods() {
+	// Public methods
+	ClassDB::bind_method(D_METHOD("getPatternTextures"), &WFC::getPatternTextures);
+	ClassDB::bind_method(
+			D_METHOD("validCellsForPattern", "pattern_id"), &WFC::validCellsForPattern);
+	ClassDB::bind_method(D_METHOD("setPatternAtPosition", "cell_index", "pattern_id"),
+			&WFC::setPatternAtPosition);
+	ClassDB::bind_method(D_METHOD("autocompleteImage"), &WFC::autocompleteImage);
+	ClassDB::bind_method(D_METHOD("resetImage"), &WFC::resetImage);
+	ClassDB::bind_method(
+			D_METHOD("erasePatternAtPosition", "cell_pos"), &WFC::erasePatternAtPosition);
+
+	// WFC settings
+	ClassDB::bind_method(D_METHOD("getConfig"), &WFC::getConfig);
+	ClassDB::bind_method(D_METHOD("setConfig", "p_config"), &WFC::setConfig);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "config", PROPERTY_HINT_RESOURCE_TYPE, "WFCConfig"),
+			"setConfig", "getConfig");
+
+	// Input sprite
+	ClassDB::bind_method(D_METHOD("getInputSprite"), &WFC::getInputSprite);
+	ClassDB::bind_method(D_METHOD("setInputSprite", "p_input_sprite"), &WFC::setInputSprite);
+	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "input_sprite", PROPERTY_HINT_NODE_TYPE, "Sprite2D"),
+			"setInputSprite", "getInputSprite");
+}
+
 bool WFC::erasePatternAtPosition(const Vector2i &cell_pos) {
 	if (!wfc_core) {
 		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
 		return false;
 	}
-	size_t adj_width = config->get_width() - config->get_pattern_size() + 1;
-	size_t adj_height = config->get_height() - config->get_pattern_size() + 1;
-	if (cell_pos.x >= static_cast<int>(adj_width) || cell_pos.y >= static_cast<int>(adj_height)) {
+	if (cell_pos.x >= static_cast<int>(grid_width) || cell_pos.y >= static_cast<int>(grid_height)) {
 		return false; // out of bounds
 	}
 
-	size_t cell_index = cell_pos.x + cell_pos.y * adj_width;
+	size_t cell_index = cell_pos.x + cell_pos.y * grid_width;
 	if (!wfc_core->checkIfCellCollapsed(cell_index)) {
 		return false;
 	}
@@ -130,56 +181,14 @@ bool WFC::erasePatternAtPosition(const Vector2i &cell_pos) {
 	output_texture->update(output_image);
 
 	// Do not add the fixed cells yet or the texture won't be updated
-	wfc_core->startSolver(adj_width, adj_height, config->get_force_boundary_patterns(), {});
+	wfc_core->startSolver(grid_width, grid_height, config->get_force_boundary_patterns(), {});
 
 	for (auto &[cell_index, pattern_id] : fixed_cells) {
-		Vector2i cell_pos(cell_index % adj_width, cell_index / adj_width);
+		Vector2i cell_pos(cell_index % grid_width, cell_index / grid_width);
 		setPatternAtPosition(cell_pos, pattern_id);
 	}
 
 	return true;
-}
-
-void WFC::initializeOutputTexture() {
-	if (!wfc_core) {
-		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
-		return;
-	}
-
-	int output_width = config->get_width();
-	int output_height = config->get_height();
-	pixel_data = PackedByteArray(); // Assuming RGBA
-	pixel_data.resize(output_width * output_height * 4);
-	pixel_data.fill(0); // Initialize with zeros
-
-	// Create a new Image with the specified dimensions and format
-	output_image = Image::create_from_data(
-			output_width, output_height, false, Image::FORMAT_RGBA8, pixel_data);
-
-	// Create a new Texture2D based on the image
-	output_texture = ImageTexture::create_from_image(output_image);
-
-	// Set the texture to the Sprite2D
-	this->set_texture(output_texture);
-}
-
-void WFC::initializeWFCCore() {
-	if (!overlapping_patterns) {
-		ERR_PRINT("OverlappingPatterns is null. Please call computeAdjacencyData() first.");
-		return;
-	}
-
-	// If seed is negative use a random seed
-	int seed = config->get_seed();
-	if (seed < 0) {
-		seed = std::chrono::system_clock::now().time_since_epoch().count();
-	}
-
-	size_t pattern_size = config->get_pattern_size();
-	wfc_core = std::make_unique<WFCCore>(overlapping_patterns->getAdjacencyData(), seed);
-	wfc_core->startSolver(config->get_width() - pattern_size + 1,
-			config->get_height() - pattern_size + 1, config->get_force_boundary_patterns(),
-			fixed_cells);
 }
 
 void WFC::mapPixelsToTexture(const std::vector<uint8_t> &pixels) {
@@ -187,31 +196,15 @@ void WFC::mapPixelsToTexture(const std::vector<uint8_t> &pixels) {
 		ERR_PRINT("Pixel data is empty. Cannot map to texture.");
 		return;
 	}
-
-	int output_width = config->get_width();
-	int output_height = config->get_height();
-
 	memcpy(pixel_data.ptrw(), pixels.data(), pixels.size());
 
-	output_image->set_data(output_width, output_height, false, Image::FORMAT_RGBA8, pixel_data);
+	output_image->set_data(
+			config->get_width(), config->get_height(), false, Image::FORMAT_RGBA8, pixel_data);
 
 	output_texture->update(output_image);
 
 	this->set_texture(output_texture);
 }
-
-void WFC::_ready() {
-	if (config.is_null()) {
-		ERR_PRINT("WFC: Config resource is not assigned!");
-		return;
-	}
-	if (input_sprite != nullptr) {
-		convertInputSpriteToPixels();
-		computeAdjacencyData();
-		initializeWFCCore();
-		initializeOutputTexture();
-	}
-};
 
 void WFC::resetImage() {
 	if (!wfc_core) {
@@ -230,8 +223,6 @@ void WFC::resetImage() {
 			config->get_height() - config->get_pattern_size() + 1,
 			config->get_force_boundary_patterns(), fixed_cells);
 }
-
-void WFC::setConfig(const Ref<WFCConfig> &p_config) { config = p_config; }
 
 TypedArray<Texture2D> WFC::getPatternTextures() {
 	TypedArray<Texture2D> texture_list;
@@ -262,13 +253,12 @@ bool WFC::setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id
 		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
 		return false;
 	}
-	size_t adj_width = config->get_width() - config->get_pattern_size() + 1;
-	size_t adj_height = config->get_height() - config->get_pattern_size() + 1;
-	if (cell_pos.x >= static_cast<int>(adj_width) || cell_pos.y >= static_cast<int>(adj_height)) {
+
+	if (cell_pos.x >= static_cast<int>(grid_width) || cell_pos.y >= static_cast<int>(grid_height)) {
 		return false;
 	}
 
-	size_t cell_index = cell_pos.x + cell_pos.y * adj_width;
+	size_t cell_index = cell_pos.x + cell_pos.y * grid_width;
 
 	bool success = wfc_core->collapseSelectedCell(cell_index, pattern_id);
 	if (success) {
@@ -289,6 +279,7 @@ bool WFC::setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id
 		output_texture->update(output_image);
 		this->set_texture(output_texture);
 	}
+
 	return success;
 }
 
