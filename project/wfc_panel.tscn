@@ -3,8 +3,9 @@
 [ext_resource type="Script" uid="uid://bay2ood8ekme7" path="res://scripts/wfc_panel.gd" id="1_sexir"]
 [ext_resource type="PackedScene" uid="uid://qk8sim8oab8" path="res://input_pattern.tscn" id="2_ddcd7"]
 [ext_resource type="PackedScene" uid="uid://b52vc3vm4renk" path="res://image_container.tscn" id="3_ddcd7"]
-[ext_resource type="Texture2D" uid="uid://bi6uebcmnylgd" path="res://Sprites/Skyline2.png" id="4_ddcd7"]
 [ext_resource type="PackedScene" uid="uid://b6pe8voglfhkr" path="res://actions_menu.tscn" id="4_vjnrn"]
+[ext_resource type="PackedScene" uid="uid://k7eugqffto2o" path="res://view_menu.tscn" id="5_6nxhc"]
+[ext_resource type="Texture2D" uid="uid://lvctqbtwncqi" path="res://Sprites/Sewers.png" id="5_u1o7l"]
 [ext_resource type="WFCConfig" uid="uid://d2rjo07g2f0ic" path="res://Resources/standard_wfc_config.tres" id="5_vjnrn"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_osxwn"]
@@ -12,6 +13,13 @@ corner_radius_top_left = 40
 corner_radius_top_right = 40
 corner_radius_bottom_right = 40
 corner_radius_bottom_left = 40
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uq0sl"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
 
 [sub_resource type="Image" id="Image_u1o7l"]
 data = {
@@ -70,12 +78,32 @@ layout_mode = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="MainWindow/WindowMargins/HBoxContainer" unique_id=1155682062]
 layout_mode = 2
 
-[node name="ActionsMenu" parent="MainWindow/WindowMargins/HBoxContainer/VBoxContainer" unique_id=189126386 instance=ExtResource("4_vjnrn")]
+[node name="MenusBox" type="HBoxContainer" parent="MainWindow/WindowMargins/HBoxContainer/VBoxContainer" unique_id=367592386]
 layout_mode = 2
+
+[node name="ActionsMenu" parent="MainWindow/WindowMargins/HBoxContainer/VBoxContainer/MenusBox" unique_id=189126386 instance=ExtResource("4_vjnrn")]
+layout_mode = 2
+
+[node name="ViewMenu" parent="MainWindow/WindowMargins/HBoxContainer/VBoxContainer/MenusBox" unique_id=1649845009 instance=ExtResource("5_6nxhc")]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MainWindow/WindowMargins/HBoxContainer/VBoxContainer" unique_id=317267862]
+visible = false
+self_modulate = Color(1.1163266, 0.5260937, 0, 1)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_uq0sl")
+
+[node name="OriginalSample" type="TextureRect" parent="MainWindow/WindowMargins/HBoxContainer/VBoxContainer/PanelContainer" unique_id=1913177148]
+texture_filter = 1
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MainWindow/WindowMargins/HBoxContainer/VBoxContainer" unique_id=1142713934]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
@@ -85,7 +113,7 @@ columns = 3
 
 [node name="InputSample" type="Sprite2D" parent="." unique_id=1021603267]
 visible = false
-texture = ExtResource("4_ddcd7")
+texture = ExtResource("5_u1o7l")
 
 [node name="WFC" type="WFC" parent="." unique_id=247466026 node_paths=PackedStringArray("input_sprite")]
 config = ExtResource("5_vjnrn")

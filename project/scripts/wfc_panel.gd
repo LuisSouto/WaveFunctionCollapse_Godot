@@ -5,7 +5,9 @@ class_name WFCPanel
 @onready var wfc_solver: WFC = $"WFC"
 @onready var list_pattern_textures: GridContainer = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/ScrollContainer/PatternTextures"
 @onready var image_container: ImageContainer = $"MainWindow/WindowMargins/HBoxContainer/ImageContainer"
-@onready var actions_button: ActionsMenu = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/ActionsMenu"
+@onready var actions_button: ActionsMenu = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/MenusBox/ActionsMenu"
+@onready var view_button: ViewMenu = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/MenusBox/ViewMenu"
+@onready var original_sample: TextureRect = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/PanelContainer/OriginalSample"
 
 @export var input_pattern_scene: PackedScene 
 var selected_panel: InputPattern
@@ -17,25 +19,33 @@ func _ready():
 	width = wfc_solver.config.width
 	height = wfc_solver.config.height
 	image_container.resize_textures(Vector2(width, height))
-	image_container.pixel_clicked_draw.connect(on_pixel_clicked_draw)
-	image_container.pixel_clicked_erase.connect(on_pixel_clicked_erase)
 	image_container.image_texture.set_texture(wfc_solver.texture)
 
-	# Connect action button and add shortcuts
+	# Draw and erase pattern signals		
+	image_container.pixel_clicked_draw.connect(on_pixel_clicked_draw)
+	image_container.pixel_clicked_erase.connect(on_pixel_clicked_erase)
+
+	# Menus
 	actions_button.get_popup().id_pressed.connect(on_actions_button_id_pressed)
+	view_button.get_popup().index_pressed.connect(on_view_button_index_pressed)
+
+	original_sample.texture = wfc_solver.input_sprite.texture
+
+	# Visibility
+	image_container.highlight_texture.visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.HIGHLIGHT_GRID)
+	original_sample.get_parent().visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.ORIGINAL_SAMPLE)
 
 	display_input_patterns()
 
 func display_input_patterns() -> void:
 	var pattern_textures: Array[Texture2D] = wfc_solver.getPatternTextures()
-	var pattern_id: int = 0
-	for texture in pattern_textures:
+
+	for pattern_id in range(pattern_textures.size()):
 		var texture_panel = input_pattern_scene.instantiate()
 		texture_panel.pattern_id = pattern_id
 		texture_panel.pattern_selected.connect(on_pattern_selected)
 		list_pattern_textures.add_child(texture_panel)		
-		texture_panel.set_texture(texture)
-		pattern_id += 1
+		texture_panel.set_texture(pattern_textures[pattern_id])
 
 func on_pattern_selected(panel: InputPattern) -> void:
 	if selected_panel:
@@ -50,7 +60,7 @@ func generate_highlight_map() -> void:
 	if selected_panel:
 		var highlight_map: Texture2D = wfc_solver.validCellsForPattern(selected_panel.pattern_id)
 		image_container.highlight_texture.material.set_shader_parameter("highlight_map", highlight_map)
-		image_container.highlight_texture.visible = true
+		# image_container.highlight_texture.visible = true
 
 func on_pixel_clicked_draw(pixel_pos: Vector2i) -> void:
 	if selected_panel:			
@@ -64,9 +74,21 @@ func on_pixel_clicked_erase(pixel_pos: Vector2i) -> void:
 func on_actions_button_id_pressed(id: int) -> void:
 	match id:
 		ActionsMenu.ActionButtons.AUTOCOMPLETE:
-			image_container.highlight_texture.visible = false
+			# image_container.highlight_texture.visible = false
 			wfc_solver.autocompleteImage()
 
 		ActionsMenu.ActionButtons.RESET:
-			image_container.highlight_texture.visible = false
+			# image_container.highlight_texture.visible = false
 			wfc_solver.resetImage()
+
+	if selected_panel:
+		generate_highlight_map()
+
+func on_view_button_index_pressed(index: int) -> void:
+	match index:
+		ViewMenu.ViewButtons.HIGHLIGHT_GRID:
+			if selected_panel:
+				image_container.highlight_texture.visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.HIGHLIGHT_GRID)
+				
+		ViewMenu.ViewButtons.ORIGINAL_SAMPLE:
+			original_sample.get_parent().visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.ORIGINAL_SAMPLE)

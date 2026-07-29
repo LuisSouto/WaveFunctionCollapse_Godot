@@ -1,6 +1,7 @@
 [gd_resource type="WFCConfig" format=3 uid="uid://d2rjo07g2f0ic"]
 
 [resource]
+boundary_condition = 3
 pattern_size = 2
 width = 32
 height = 32
