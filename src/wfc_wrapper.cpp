@@ -1,5 +1,6 @@
 #include "godot_cpp/core/object.hpp"
 #include <overlapping_patterns.h>
+#include <sprite_transforms.h>
 #include <wfc_core.h>
 #include <wfc_wrapper.h>
 #include <cstdint>
@@ -99,8 +100,10 @@ void WFC::generateOverlappingPatterns() {
 		return;
 	}
 
-	overlapping_patterns = std::make_unique<OverlappingPatterns>(
-			*sprite_holder, config->get_pattern_size(), config->get_boundary_condition());
+	overlapping_patterns =
+			std::make_unique<OverlappingPatterns>(*sprite_holder, config->get_pattern_size(),
+					config->get_boundary_condition(), config->get_transform_flags());
+	UtilityFunctions::print(config->get_transform_flags());
 }
 
 void WFC::convertInputSpriteToPixels() {
@@ -231,6 +234,8 @@ TypedArray<Texture2D> WFC::getPatternTextures() {
 	size_t N = config->get_pattern_size();
 	size_t pattern_size = N * N * 4; // Assuming RGBA
 	size_t num_patterns = patterns.size() / pattern_size;
+	UtilityFunctions::print("Number of patterns: ", num_patterns);
+	UtilityFunctions::print("Number of patterns: ", overlapping_patterns->getNumPatterns());
 
 	for (size_t i = 0; i < num_patterns; ++i) {
 		PackedByteArray buffer;

@@ -27,6 +27,9 @@ void WFCConfig::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_width", "width"), &WFCConfig::set_width);
 	ClassDB::bind_method(D_METHOD("get_height"), &WFCConfig::get_height);
 	ClassDB::bind_method(D_METHOD("set_height", "height"), &WFCConfig::set_height);
+	ClassDB::bind_method(D_METHOD("get_transform_flags"), &WFCConfig::get_transform_flags);
+	ClassDB::bind_method(
+			D_METHOD("set_transform_flags", "transform_flags"), &WFCConfig::set_transform_flags);
 
 	// Bind enums
 	BIND_ENUM_CONSTANT(BoundaryCondition::NONE);
@@ -54,4 +57,8 @@ void WFCConfig::_bind_methods() {
 			"get_width");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "height", PROPERTY_HINT_RANGE, "1,1024,1"),
 			"set_height", "get_height");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "transform_flags", PROPERTY_HINT_FLAGS,
+						 "Identity, Rotate 90, Rotate 180, Rotate 270", PROPERTY_USAGE_DEFAULT,
+						 "Transforms"),
+			"set_transform_flags", "get_transform_flags");
 }

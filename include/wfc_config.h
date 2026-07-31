@@ -9,6 +9,7 @@ class WFCConfig : public Resource {
 	GDCLASS(WFCConfig, Resource)
 
 protected:
+	uint8_t transform_flags;
 	uint32_t width;
 	uint32_t height;
 	int seed;
@@ -62,6 +63,9 @@ public:
 	void set_force_boundary_patterns(bool p_force_boundary_patterns) {
 		force_boundary_patterns = p_force_boundary_patterns;
 	}
+
+	uint8_t get_transform_flags() const { return transform_flags; }
+	void set_transform_flags(uint8_t p_transform_flags) { transform_flags = p_transform_flags; }
 };
 
 VARIANT_ENUM_CAST(BoundaryCondition);
