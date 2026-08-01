@@ -6,11 +6,12 @@ class_name ViewMenu
 enum ViewButtons{
 	HIGHLIGHT_GRID = 0,
 	ORIGINAL_SAMPLE = 1,
+	HIDE_COORDINATES = 2
 }
 
 func _ready():
 	get_popup().index_pressed.connect(on_index_pressed)
-	var shortcut_keys: Array[int] = [Key.KEY_H, Key.KEY_O]
+	var shortcut_keys: Array[int] = [Key.KEY_H, Key.KEY_O, Key.KEY_C]
 	for view_index in ViewButtons.values():
 		set_shortcut_for_index(view_index, shortcut_keys[view_index])
 

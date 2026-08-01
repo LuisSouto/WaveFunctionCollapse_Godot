@@ -35,3 +35,9 @@ material = SubResource("ShaderMaterial_md8kf")
 layout_mode = 2
 mouse_filter = 1
 color = Color(1, 1, 1, 0)
+
+[node name="PixelPositionLabel" type="Label" parent="." unique_id=2078948626]
+custom_minimum_size = Vector2(10, 3)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8

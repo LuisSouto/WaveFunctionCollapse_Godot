@@ -36,6 +36,7 @@ func _ready():
 	# Visibility
 	image_container.highlight_texture.visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.HIGHLIGHT_GRID)
 	original_sample.get_parent().visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.ORIGINAL_SAMPLE)
+	image_container.pixel_pos_label.visible = not view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.HIDE_COORDINATES)
 
 	# Input file name (for saving outputs)
 	input_file_name = wfc_solver.input_sprite.texture.resource_path.get_file().get_basename()
@@ -97,6 +98,9 @@ func on_view_button_index_pressed(index: int) -> void:
 				
 		ViewMenu.ViewButtons.ORIGINAL_SAMPLE:
 			original_sample.get_parent().visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.ORIGINAL_SAMPLE)
+
+		ViewMenu.ViewButtons.HIDE_COORDINATES:
+			image_container.pixel_pos_label.visible = not view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.HIDE_COORDINATES)
 
 func save_output_texture() -> void:
 	var image: Image = wfc_solver.texture.get_image()
