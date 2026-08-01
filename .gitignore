@@ -5,7 +5,9 @@
 # Clangd stuff
 .cache
 
+# Input and output folders
 Sprites
+Outputs
 
 # Ignore build directories
 /build/

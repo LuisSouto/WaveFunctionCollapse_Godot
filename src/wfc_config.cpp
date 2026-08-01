@@ -57,8 +57,9 @@ void WFCConfig::_bind_methods() {
 			"get_width");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "height", PROPERTY_HINT_RANGE, "1,1024,1"),
 			"set_height", "get_height");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "transform_flags", PROPERTY_HINT_FLAGS,
-						 "Identity, Rotate 90, Rotate 180, Rotate 270", PROPERTY_USAGE_DEFAULT,
-						 "Transforms"),
+	ADD_PROPERTY(
+			PropertyInfo(Variant::INT, "transform_flags", PROPERTY_HINT_FLAGS,
+					"Identity, Rotate 90, Rotate 180, Rotate 270, Flip Horizontal, Flip Vertical",
+					PROPERTY_USAGE_DEFAULT, "Transforms"),
 			"set_transform_flags", "get_transform_flags");
 }

@@ -64,12 +64,12 @@ std::vector<uint8_t> WFC::generateOutputPixelImage() {
 		return {};
 	}
 
-	std::span<const pattern_id_t> collapsed_patterns =
+	std::span<const pattern_id_t> generated_patterns =
 			wfc_core->solve(grid_width, grid_height, 0, config->get_force_boundary_patterns(),
 					config->get_cell_selection_strategy(), fixed_cells);
 
 	// Convert the collapsed patterns back to pixel data
-	return overlapping_patterns->convertIdsToPixels(collapsed_patterns, grid_width, grid_height);
+	return overlapping_patterns->convertIdsToPixels(generated_patterns, grid_width, grid_height);
 }
 
 void WFC::initializeWFCCore() {
@@ -78,7 +78,7 @@ void WFC::initializeWFCCore() {
 		return;
 	}
 
-	// If seed is negative use a random seed
+	// If config seed is negative use a random seed
 	uint64_t seed;
 	if (config->get_seed() < 0) {
 		seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -103,7 +103,6 @@ void WFC::generateOverlappingPatterns() {
 	overlapping_patterns =
 			std::make_unique<OverlappingPatterns>(*sprite_holder, config->get_pattern_size(),
 					config->get_boundary_condition(), config->get_transform_flags());
-	UtilityFunctions::print(config->get_transform_flags());
 }
 
 void WFC::convertInputSpriteToPixels() {
@@ -234,8 +233,6 @@ TypedArray<Texture2D> WFC::getPatternTextures() {
 	size_t N = config->get_pattern_size();
 	size_t pattern_size = N * N * 4; // Assuming RGBA
 	size_t num_patterns = patterns.size() / pattern_size;
-	UtilityFunctions::print("Number of patterns: ", num_patterns);
-	UtilityFunctions::print("Number of patterns: ", overlapping_patterns->getNumPatterns());
 
 	for (size_t i = 0; i < num_patterns; ++i) {
 		PackedByteArray buffer;

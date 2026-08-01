@@ -8,6 +8,8 @@ class_name WFCPanel
 @onready var actions_button: ActionsMenu = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/MenusBox/ActionsMenu"
 @onready var view_button: ViewMenu = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/MenusBox/ViewMenu"
 @onready var original_sample: TextureRect = $"MainWindow/WindowMargins/HBoxContainer/VBoxContainer/PanelContainer/OriginalSample"
+var save_counter: int = 1
+var input_file_name: String
 
 @export var input_pattern_scene: PackedScene 
 var selected_panel: InputPattern
@@ -34,6 +36,9 @@ func _ready():
 	# Visibility
 	image_container.highlight_texture.visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.HIGHLIGHT_GRID)
 	original_sample.get_parent().visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.ORIGINAL_SAMPLE)
+
+	# Input file name (for saving outputs)
+	input_file_name = wfc_solver.input_sprite.texture.resource_path.get_file().get_basename()
 
 	display_input_patterns()
 
@@ -74,12 +79,13 @@ func on_pixel_clicked_erase(pixel_pos: Vector2i) -> void:
 func on_actions_button_id_pressed(id: int) -> void:
 	match id:
 		ActionsMenu.ActionButtons.AUTOCOMPLETE:
-			# image_container.highlight_texture.visible = false
 			wfc_solver.autocompleteImage()
 
 		ActionsMenu.ActionButtons.RESET:
-			# image_container.highlight_texture.visible = false
 			wfc_solver.resetImage()
+
+		ActionsMenu.ActionButtons.SAVE_IMAGE:
+			save_output_texture()
 
 	if selected_panel:
 		generate_highlight_map()
@@ -87,8 +93,13 @@ func on_actions_button_id_pressed(id: int) -> void:
 func on_view_button_index_pressed(index: int) -> void:
 	match index:
 		ViewMenu.ViewButtons.HIGHLIGHT_GRID:
-			if selected_panel:
-				image_container.highlight_texture.visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.HIGHLIGHT_GRID)
+			image_container.highlight_texture.visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.HIGHLIGHT_GRID)
 				
 		ViewMenu.ViewButtons.ORIGINAL_SAMPLE:
 			original_sample.get_parent().visible = view_button.get_popup().is_item_checked(ViewMenu.ViewButtons.ORIGINAL_SAMPLE)
+
+func save_output_texture() -> void:
+	var image: Image = wfc_solver.texture.get_image()
+	var file_path: String = "res://Outputs/" + input_file_name + "_output_" + str(save_counter) + ".png"
+	image.save_png(file_path)
+	save_counter += 1
