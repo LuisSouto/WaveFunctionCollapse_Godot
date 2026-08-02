@@ -2,7 +2,8 @@
 
 [resource]
 seed = 5
-force_boundary_patterns = true
 width = 32
 height = 32
-transform_flags = 49
+pattern_size = 2
+force_boundary_patterns = true
+transform_flags = 1

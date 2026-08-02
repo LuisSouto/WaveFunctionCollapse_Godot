@@ -9,6 +9,7 @@
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/classes/texture2d.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <random>
 #include <vector>
 
 using namespace godot;
@@ -64,9 +65,18 @@ std::vector<uint8_t> WFC::generateOutputPixelImage() {
 		return {};
 	}
 
-	std::span<const pattern_id_t> generated_patterns =
-			wfc_core->solve(grid_width, grid_height, 0, config->get_force_boundary_patterns(),
-					config->get_cell_selection_strategy(), fixed_cells);
+	size_t start_index;
+	if (config->get_start_index() < 0 || config->get_start_index() >= grid_width * grid_height) {
+		std::uniform_int_distribution<size_t> dist(0, grid_width * grid_height - 1);
+		std::mt19937 rng(std::random_device{}());
+		start_index = dist(rng);
+	} else {
+		start_index = static_cast<size_t>(config->get_start_index());
+	}
+
+	std::span<const pattern_id_t> generated_patterns = wfc_core->solve(grid_width, grid_height,
+			start_index, config->get_force_boundary_patterns(),
+			config->get_cell_selection_strategy(), fixed_cells);
 
 	// Convert the collapsed patterns back to pixel data
 	return overlapping_patterns->convertIdsToPixels(generated_patterns, grid_width, grid_height);

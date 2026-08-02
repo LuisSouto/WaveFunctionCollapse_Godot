@@ -9,12 +9,12 @@ class WFCConfig : public Resource {
 	GDCLASS(WFCConfig, Resource)
 
 protected:
-	uint8_t transform_flags;
 	uint32_t width;
 	uint32_t height;
 	int seed;
-	uint8_t dimensions;
+	int start_index;
 	uint8_t pattern_size;
+	uint8_t transform_flags;
 	BoundaryCondition boundary_condition;
 	CellSelectionStrategy cell_selection_strategy;
 	bool force_boundary_patterns;
@@ -23,10 +23,10 @@ protected:
 
 public:
 	WFCConfig() {
-		width = 128;
-		height = 128;
+		width = 64;
+		height = 64;
 		seed = -1;
-		dimensions = 2;
+		start_index = -1;
 		boundary_condition = BoundaryCondition::NONE;
 		cell_selection_strategy = CellSelectionStrategy::SCANLINE;
 		pattern_size = 3;
@@ -36,8 +36,6 @@ public:
 
 	int get_seed() const { return seed; }
 	void set_seed(int p_seed) { seed = p_seed; }
-	uint8_t get_dimensions() const { return dimensions; }
-	void set_dimensions(uint8_t p_dimensions) { dimensions = p_dimensions; }
 
 	BoundaryCondition get_boundary_condition() const { return boundary_condition; }
 	void set_boundary_condition(BoundaryCondition p_boundary_condition) {
@@ -66,6 +64,9 @@ public:
 
 	uint8_t get_transform_flags() const { return transform_flags; }
 	void set_transform_flags(uint8_t p_transform_flags) { transform_flags = p_transform_flags; }
+
+	int get_start_index() const { return start_index; }
+	void set_start_index(int p_start_index) { start_index = p_start_index; }
 };
 
 VARIANT_ENUM_CAST(BoundaryCondition);
