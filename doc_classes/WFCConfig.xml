@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="WFCConfig" inherits="Resource" api_type="extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+		Configuration file for the Wave Function Collapse algorithm. Required to configure the WFC node.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="boundary_condition" type="int" setter="set_boundary_condition" getter="get_boundary_condition" enum="BoundaryCondition" default="0">
+			<description>
+				Specifies the boundary condition to read the input image. The default is NONE, which treats the boundaries as hard edges. PERIODIC_X means that the input image is self-repeating in the X axis. PERIODIC_Y is defined analogously for the Y axis. PERIODIC simply combines PERIODIC_X and PERIODIC_Y.
+			</description>
+		</member>
+		<member name="cell_selection_strategy" type="int" setter="set_cell_selection_strategy" getter="get_cell_selection_strategy" enum="CellSelectionStrategy" default="0">
+		</member>
+		<member name="force_boundary_patterns" type="bool" setter="set_force_boundary_patterns" getter="get_force_boundary_patterns" default="false">
+		</member>
+		<member name="height" type="int" setter="set_height" getter="get_height" default="64">
+		</member>
+		<member name="pattern_size" type="int" setter="set_pattern_size" getter="get_pattern_size" default="3">
+		</member>
+		<member name="seed" type="int" setter="set_seed" getter="get_seed" default="-1">
+		</member>
+		<member name="start_index" type="int" setter="set_start_index" getter="get_start_index" default="-1">
+		</member>
+		<member name="transform_flags" type="int" setter="set_transform_flags" getter="get_transform_flags" default="0">
+		</member>
+		<member name="width" type="int" setter="set_width" getter="get_width" default="64">
+		</member>
+	</members>
+	<constants>
+		<constant name="BoundaryCondition::NONE" value="0" enum="BoundaryCondition">
+		</constant>
+		<constant name="BoundaryCondition::PERIODIC_X" value="1" enum="BoundaryCondition">
+		</constant>
+		<constant name="BoundaryCondition::PERIODIC_Y" value="2" enum="BoundaryCondition">
+		</constant>
+		<constant name="BoundaryCondition::PERIODIC" value="3" enum="BoundaryCondition">
+		</constant>
+		<constant name="CellSelectionStrategy::SCANLINE" value="0" enum="CellSelectionStrategy">
+		</constant>
+		<constant name="CellSelectionStrategy::ENTROPY" value="1" enum="CellSelectionStrategy">
+		</constant>
+	</constants>
+</class>

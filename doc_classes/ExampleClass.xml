@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="ExampleClass" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+<class name="ExampleClass" inherits="RefCounted" api_type="extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
 		Example class.
 	</brief_description>
@@ -18,3 +18,118 @@
 		</method>
 	</methods>
 </class>
+
+<class name="WFC" inherits="Sprite2D" api_type="extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Wave Function Collapse algorithm
+	</brief_description>
+	<description>
+		Procedural generator of 2D pixel textures based on the Wave Function Collapse algorithm. It takes an input image and generates a new image that resembles the input based on adjacency constraints.
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="autocompleteImage">
+			<return type="void" />
+			<description>
+				Fills remaining empty pixels in the output image using the WFC algorithm.
+			</description>
+		</method>
+		<method name="erasePatternAtPosition">
+			<return type="bool" />
+			<param index="0" name="cell_pos" type="Vector2i" />
+			<description>
+				Returns true if the pattern was successfully erased, false otherwise. Cells collapsed via "autocompleteImage" cannot be erased this way.
+			</description>
+		</method>
+		<method name="getPatternTextures">
+			<return type="Texture2D[]" />
+			<description>
+				Returns the textures of all patterns extracted from the input image, in the order they were found.
+			</description>
+		</method>
+		<method name="resetImage">
+			<return type="void" />
+			<description>
+				Resets the output image to its initial blank state.
+			</description>
+		</method>
+		<method name="setPatternAtPosition">
+			<return type="bool" />
+			<param index="0" name="cell_index" type="Vector2i" />
+			<param index="1" name="pattern_id" type="int" />
+			<description>
+				Returns true if the pattern was successfully set, false otherwise. Cells that are already collapsed cannot be overwritten.
+			</description>
+		</method>
+		<method name="validCellsForPattern">
+			<return type="Texture2D" />
+			<param index="0" name="pattern_id" type="int" />
+			<description>
+				Returns a texture highlighting the valid cells where the specified pattern can be placed. Valid cells are marked in white, while invalid cells are marked in black.
+			</description>
+		</method>
+	</methods>
+	<members>
+		<member name="config" type="WFCConfig" setter="setConfig" getter="getConfig">
+			Configuration resource for the WFC algorithm. It contains parameters such as output image size, pattern size, boundary conditions, and more.
+		</member>
+		<member name="input_sprite" type="Sprite2D" setter="setInputSprite" getter="getInputSprite">
+		</member>
+	</members>
+</class>
+
+<class name="WFCConfig" inherits="Resource" api_type="extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Configuration file for the Wave Function Collapse algorithm.
+	</brief_description>
+	<description>
+		Configuration file for the Wave Function Collapse algorithm. Required to configure the WFC node.
+	</description>
+	<tutorials>
+	</tutorials>
+	<members>
+		<member name="boundary_condition" type="int" setter="set_boundary_condition" getter="get_boundary_condition" enum="BoundaryCondition" default="0">
+			How to treat the input image around its boundaries. Default is NONE, which treats the boundaries as hard edges. PERIODIC_X(Y) repeats the image in the horizontal (vertical) axis. PERIODIC combines PERIODIC_X and PERIODIC_Y.
+		</member>
+		<member name="cell_selection_strategy" type="int" setter="set_cell_selection_strategy" getter="get_cell_selection_strategy" enum="CellSelectionStrategy" default="0">
+			Mechanism to choose the next cell to collapse. Default is SCANLINE, which chooses the next cell in a scanline order. ENTROPY chooses the cell with the lowest entropy.
+		</member>
+		<member name="force_boundary_patterns" type="bool" setter="set_force_boundary_patterns" getter="get_force_boundary_patterns" default="false">
+			Forces the boundaries of the output image to use only patterns that are present in the boundaries of the input image.
+		</member>
+		<member name="height" type="int" setter="set_height" getter="get_height" default="64">
+			Height of the output image.
+		</member>
+		<member name="pattern_size" type="int" setter="set_pattern_size" getter="get_pattern_size" default="3">
+			Size (in pixels) of the patterns used in the WFC algorithm.
+		</member>
+		<member name="seed" type="int" setter="set_seed" getter="get_seed" default="-1">
+			Random seed for the WFC algorithm. Default is -1, which uses a random seed. For reproducible results, set a positive seed value.
+		</member>
+		<member name="start_index" type="int" setter="set_start_index" getter="get_start_index" default="-1">
+			Index of the starting cell for the WFC algorithm. Default is -1, which lets the algorithm choose the starting cell randomly.
+		</member>
+		<member name="transform_flags" type="int" setter="set_transform_flags" getter="get_transform_flags" default="0">
+			Trigger transformations (rotations and reflections) on the input image to extract more patterns. Default is 0, which means no transformations. 
+		</member>
+		<member name="width" type="int" setter="set_width" getter="get_width" default="64">
+			Width of the output image.
+		</member>
+	</members>
+	<constants>
+		<constant name="BoundaryCondition::NONE" value="0" enum="BoundaryCondition">
+		</constant>
+		<constant name="BoundaryCondition::PERIODIC_X" value="1" enum="BoundaryCondition">
+		</constant>
+		<constant name="BoundaryCondition::PERIODIC_Y" value="2" enum="BoundaryCondition">
+		</constant>
+		<constant name="BoundaryCondition::PERIODIC" value="3" enum="BoundaryCondition">
+		</constant>
+		<constant name="CellSelectionStrategy::SCANLINE" value="0" enum="CellSelectionStrategy">
+		</constant>
+		<constant name="CellSelectionStrategy::ENTROPY" value="1" enum="CellSelectionStrategy">
+		</constant>
+	</constants>
+</class>
+
