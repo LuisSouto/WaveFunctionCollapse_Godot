@@ -31,6 +31,7 @@ public:
 		cell_selection_strategy = CellSelectionStrategy::SCANLINE;
 		pattern_size = 3;
 		force_boundary_patterns = false;
+		transform_flags = 1;
 	}
 	~WFCConfig() override = default;
 

@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bei7clhw1iovh"]
+
+[ext_resource type="Script" uid="uid://c1pgwn5iesiia" path="res://scripts/cave_door.gd" id="1_62dsh"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uq0sl"]
+
+[node name="CaveDoor" type="Area2D" unique_id=375735102]
+script = ExtResource("1_62dsh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=442416781]
+shape = SubResource("RectangleShape2D_uq0sl")
