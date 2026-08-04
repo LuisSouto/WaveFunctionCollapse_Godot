@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bei7clhw1iovh" path="res://cave_door.tscn" id="3_j3a8h"]
 
 [sub_resource type="WFCConfig" id="WFCConfig_inees"]
+pattern_size = 2
 
 [sub_resource type="Image" id="Image_j3a8h"]
 data = {
@@ -18,6 +19,17 @@ data = {
 
 [sub_resource type="ImageTexture" id="ImageTexture_hg112"]
 image = SubResource("Image_j3a8h")
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_j3a8h"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_hg112"]
+normal = Vector2(0, 1)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_rf7o4"]
+normal = Vector2(1, 0)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_uc6nc"]
+normal = Vector2(-1, 0)
 
 [node name="ProcGenCave" type="Node2D" unique_id=592506488]
 script = ExtResource("1_kkpo8")
@@ -33,8 +45,36 @@ visible = false
 texture = ExtResource("1_rjch8")
 
 [node name="CaveDoor" parent="." unique_id=375735102 instance=ExtResource("3_j3a8h")]
-position = Vector2(164, -66)
+position = Vector2(-950, -354)
 target_scene = "wfc_dungeon.tscn"
-player_spawn_pos = Vector2(175, -35)
+player_spawn_pos = Vector2(155, -59)
 
 [node name="Player" parent="." unique_id=25683687 instance=ExtResource("2_twuww")]
+
+[node name="WorldBoundaryDown" type="StaticBody2D" parent="." unique_id=1354107040]
+position = Vector2(0, 512)
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBoundaryDown" unique_id=1338438051]
+shape = SubResource("WorldBoundaryShape2D_j3a8h")
+
+[node name="WorldBoundaryUp" type="StaticBody2D" parent="." unique_id=306223241]
+position = Vector2(0, -512)
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBoundaryUp" unique_id=784140707]
+shape = SubResource("WorldBoundaryShape2D_hg112")
+
+[node name="WorldBoundaryLeft" type="StaticBody2D" parent="." unique_id=1918842594]
+position = Vector2(-964, 0)
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBoundaryLeft" unique_id=1701801382]
+shape = SubResource("WorldBoundaryShape2D_rf7o4")
+
+[node name="WorldBoundaryRight" type="StaticBody2D" parent="." unique_id=15301347]
+position = Vector2(964, 0)
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBoundaryRight" unique_id=1339423642]
+shape = SubResource("WorldBoundaryShape2D_uc6nc")

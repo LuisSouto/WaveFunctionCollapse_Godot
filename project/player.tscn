@@ -14,3 +14,12 @@ metadata/_custom_type_script = "uid://cm8r81xp2mcwd"
 shape = SubResource("CapsuleShape2D_uq0sl")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=53315163]
+limit_left = -964
+limit_top = -512
+limit_right = 964
+limit_bottom = 512
+drag_left_margin = 1.0
+drag_top_margin = 1.0
+drag_right_margin = 1.0
+drag_bottom_margin = 1.0
+editor_draw_limits = true

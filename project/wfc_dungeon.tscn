@@ -8,7 +8,8 @@
 script = ExtResource("1_106gt")
 
 [node name="CaveDoor" parent="." unique_id=375735102 instance=ExtResource("1_ks4sy")]
-position = Vector2(175, -60)
+position = Vector2(175, -59)
 target_scene = "proc_gen_cave.tscn"
+player_spawn_pos = Vector2(-925, -354)
 
 [node name="Player" parent="." unique_id=25683687 instance=ExtResource("1_xy342")]
