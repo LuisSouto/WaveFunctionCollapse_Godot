@@ -9,6 +9,7 @@
 #include <godot_cpp/classes/resource.hpp>
 #include <godot_cpp/classes/texture2d.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/packed_int32_array.hpp>
 #include <random>
 #include <vector>
 
@@ -157,6 +158,7 @@ void WFC::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("resetImage"), &WFC::resetImage);
 	ClassDB::bind_method(
 			D_METHOD("erasePatternAtPosition", "cell_pos"), &WFC::erasePatternAtPosition);
+	ClassDB::bind_method(D_METHOD("getDualGridPatterns"), &WFC::getDualGridPatterns);
 
 	// WFC settings
 	ClassDB::bind_method(D_METHOD("getConfig"), &WFC::getConfig);
@@ -315,4 +317,32 @@ Ref<Texture2D> WFC::validCellsForPattern(pattern_id_t pattern_id) {
 	Ref<Texture2D> valid_cells_texture = ImageTexture::create_from_image(valid_cells_image);
 
 	return valid_cells_texture;
+}
+
+PackedInt32Array WFC::getDualGridPatterns() {
+	size_t pattern_size = config->get_pattern_size();
+	size_t num_channels = sprite_holder->getChannels();
+	size_t pattern_stride = pattern_size * num_channels;
+	size_t dualgrid_width = grid_width;
+	size_t dualgrid_height = grid_height;
+	size_t total_width = config->get_width();
+	PackedInt32Array pattern_ids;
+	pattern_ids.resize(dualgrid_width * dualgrid_height);
+	for (size_t y = 0; y < dualgrid_height; ++y) {
+		for (size_t x = 0; x < dualgrid_width; ++x) {
+			size_t pixel_index = (x + y * total_width) * num_channels;
+			int32_t pattern_id = 0;
+			for (size_t dy = 0; dy < pattern_size; ++dy) {
+				for (size_t dx = 0; dx < pattern_size; ++dx) {
+					uint8_t pixel_value =
+							pixel_data[pixel_index + (dx + dy * total_width) * num_channels];
+					pattern_id |=
+							(static_cast<int32_t>(pixel_value >> 7) << ((dy * pattern_size + dx)));
+				}
+			}
+			pattern_ids[x + y * dualgrid_width] = pattern_id;
+		}
+	}
+
+	return pattern_ids;
 }

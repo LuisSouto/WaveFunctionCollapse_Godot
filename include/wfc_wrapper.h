@@ -62,4 +62,6 @@ public:
 	bool setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id);
 
 	Ref<Texture2D> validCellsForPattern(pattern_id_t pattern_id);
+
+	PackedInt32Array getDualGridPatterns();
 };

@@ -25,8 +25,8 @@ GlobalVariables="*uid://bop3chbddt0x3"
 
 [display]
 
-window/size/viewport_width=1928
-window/size/viewport_height=1024
+window/size/viewport_width=1200
+window/size/viewport_height=1200
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
 

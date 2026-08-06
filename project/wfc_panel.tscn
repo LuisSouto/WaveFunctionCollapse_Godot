@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://b6pe8voglfhkr" path="res://actions_menu.tscn" id="4_vjnrn"]
 [ext_resource type="PackedScene" uid="uid://k7eugqffto2o" path="res://view_menu.tscn" id="5_6nxhc"]
 [ext_resource type="WFCConfig" uid="uid://d2rjo07g2f0ic" path="res://Resources/standard_wfc_config.tres" id="5_vjnrn"]
-[ext_resource type="Texture2D" uid="uid://b5bt2nlub61ei" path="res://Sprites/Cave.png" id="6_u1o7l"]
+[ext_resource type="Texture2D" uid="uid://b6aso3aqgkryb" path="res://Sprites/Disk.png" id="6_u1o7l"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_osxwn"]
 corner_radius_top_left = 40
