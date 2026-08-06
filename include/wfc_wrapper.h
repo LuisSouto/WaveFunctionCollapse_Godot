@@ -38,6 +38,8 @@ protected:
 	void initializeOutputTexture();
 	std::vector<uint8_t> generateOutputPixelImage();
 	void mapPixelsToTexture(const std::vector<uint8_t> &pixels);
+	void updateTexture();
+	bool setPatternAtCell(const Vector2i cell_pos, pattern_id_t pattern_id);
 
 public:
 	WFC() = default;
@@ -59,7 +61,8 @@ public:
 
 	void resetImage();
 
-	bool setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id);
+	bool fixPatternsAtCells(
+			const TypedArray<Vector2i> &cell_pos, TypedArray<pattern_id_t> pattern_id);
 
 	Ref<Texture2D> validCellsForPattern(pattern_id_t pattern_id);
 

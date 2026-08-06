@@ -3,11 +3,12 @@
 [ext_resource type="Script" uid="uid://cm8r81xp2mcwd" path="res://scripts/player.gd" id="1_0s3u6"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_uq0sl"]
-radius = 6.0
-height = 24.0
+radius = 24.0
+height = 74.0
 
 [node name="Player" type="CharacterBody2D" unique_id=25683687]
 script = ExtResource("1_0s3u6")
+speed = 200.0
 metadata/_custom_type_script = "uid://cm8r81xp2mcwd"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2059117677]

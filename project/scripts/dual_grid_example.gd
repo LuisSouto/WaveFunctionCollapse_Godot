@@ -6,10 +6,26 @@ class_name DualGridExample
 @onready var visualLayer: TileMapLayer = $VisualLayer
 
 func _ready() -> void:
-	visualLayer.position = -get_viewport().size/2	
+	visualLayer.position = -get_viewport().size/2
+
+	# Fix a path from a start tile to an end tile	
+	var fixed_pattern_id: int = 8 # One could also make a list of "path" patterns and randomly sample from it. Either way which pattern ids can be used for paths need to know in advance.
+
+	# Start and end can be either hardcoded or obtained from other procedural generation methods. For example, binary partition could divide the level into rooms, including the entrances and exits for each room.
+	var path_start: Vector2i = Vector2i(0, 6)
+	var path_end: Vector2i = Vector2i(wfc.config.width - wfc.config.pattern_size, 9)
+	var path: Array[Vector2i] = PathFinder2D.pathfinder(path_start, path_end, 0.5)
+	var fixed_pattern_list: Array[int]
+	fixed_pattern_list.resize(path.size())
+	fixed_pattern_list.fill(fixed_pattern_id)
+	wfc.fixPatternsAtCells(path, fixed_pattern_list)
+			
+
+	# Map the pattern ids from the simplified texture to the atlas of the visual layer
 	wfc.autocompleteImage()
 	var pattern_ids: PackedInt32Array = wfc.getDualGridPatterns()
-	var tilemap_size: int = wfc.config.width - 1
+	var tilemap_size: int = wfc.config.width - wfc.config.pattern_size + 1
+	# This mapping is due to how I define my tilesets in Aseprite
 	var pattern_map: Array[int] = [6, 5, 2, 3, 10, 1, 4, 13, 7, 14, 11, 0, 9, 8, 15, 12]
 
 	var tile_pos: Vector2i = Vector2i.ZERO
@@ -18,4 +34,6 @@ func _ready() -> void:
 			tile_pos = Vector2i(x, y)
 			var pattern_id: int = pattern_ids[y * tilemap_size + x]
 			visualLayer.set_cell(tile_pos, 0, Vector2i(pattern_map[pattern_id], 0))
+
+	# Scale the map layer to occupy the entire viewport
 	visualLayer.scale = Vector2(get_viewport().size) / (tilemap_size * Vector2(visualLayer.tile_set.tile_size))

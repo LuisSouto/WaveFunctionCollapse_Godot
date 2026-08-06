@@ -4,6 +4,12 @@
 [ext_resource type="Shader" uid="uid://1xqvtgrc3tq6" path="res://shaders/texture_grid.gdshader" id="1_tjlp2"]
 [ext_resource type="Shader" uid="uid://dkjys846kuqde" path="res://shaders/highlight_shader.gdshader" id="2_memi3"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ew5ks"]
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_s3g0x"]
 shader = ExtResource("1_tjlp2")
 shader_parameter/grid_size = Vector2(0, 0)
@@ -12,9 +18,11 @@ shader_parameter/grid_size = Vector2(0, 0)
 shader = ExtResource("2_memi3")
 
 [node name="ImageContainer" type="PanelContainer" unique_id=464863355]
+self_modulate = Color(1, 1, 0, 1)
 offset_right = 40.0
 offset_bottom = 40.0
 size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_ew5ks")
 script = ExtResource("1_md8kf")
 
 [node name="EmptyTexture" type="ColorRect" parent="." unique_id=148057167]

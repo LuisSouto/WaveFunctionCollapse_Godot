@@ -54,12 +54,12 @@
 				Resets the output image to its initial blank state.
 			</description>
 		</method>
-		<method name="setPatternAtPosition">
+		<method name="fixPatternsAtPositions">
 			<return type="bool" />
-			<param index="0" name="cell_index" type="Vector2i" />
-			<param index="1" name="pattern_id" type="int" />
+			<param index="0" name="cell_indexes" type="Array[Vector2i]" />
+			<param index="1" name="pattern_ids" type="Array[int]" />
 			<description>
-				Returns true if the pattern was successfully set, false otherwise. Cells that are already collapsed cannot be overwritten.
+				Returns true if all the patterns were successfully set, false otherwise. Cells that are already collapsed cannot be overwritten.
 			</description>
 		</method>
 		<method name="validCellsForPattern">

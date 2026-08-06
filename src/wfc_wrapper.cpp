@@ -1,4 +1,5 @@
 #include "godot_cpp/core/object.hpp"
+#include "wfc_typedefs.h"
 #include <overlapping_patterns.h>
 #include <sprite_transforms.h>
 #include <wfc_core.h>
@@ -10,6 +11,9 @@
 #include <godot_cpp/classes/texture2d.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
+#include <godot_cpp/variant/typed_array.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/variant/vector2i.hpp>
 #include <random>
 #include <vector>
 
@@ -152,8 +156,8 @@ void WFC::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("getPatternTextures"), &WFC::getPatternTextures);
 	ClassDB::bind_method(
 			D_METHOD("validCellsForPattern", "pattern_id"), &WFC::validCellsForPattern);
-	ClassDB::bind_method(D_METHOD("setPatternAtPosition", "cell_index", "pattern_id"),
-			&WFC::setPatternAtPosition);
+	ClassDB::bind_method(D_METHOD("fixPatternsAtCells", "cell_indexes", "pattern_ids"),
+			&WFC::fixPatternsAtCells);
 	ClassDB::bind_method(D_METHOD("autocompleteImage"), &WFC::autocompleteImage);
 	ClassDB::bind_method(D_METHOD("resetImage"), &WFC::resetImage);
 	ClassDB::bind_method(
@@ -199,8 +203,9 @@ bool WFC::erasePatternAtPosition(const Vector2i &cell_pos) {
 
 	for (auto &[cell_index, pattern_id] : fixed_cells) {
 		Vector2i cell_pos(cell_index % grid_width, cell_index / grid_width);
-		setPatternAtPosition(cell_pos, pattern_id);
+		setPatternAtCell(cell_pos, pattern_id);
 	}
+	updateTexture();
 
 	return true;
 }
@@ -228,16 +233,12 @@ void WFC::resetImage() {
 
 	fixed_cells.clear();
 	pixel_data.fill(0);
-	output_image->set_data(
-			config->get_width(), config->get_height(), false, Image::FORMAT_RGBA8, pixel_data);
-	output_texture->update(output_image);
-	this->set_texture(output_texture);
+	updateTexture();
 
-	wfc_core->startSolver(config->get_width() - config->get_pattern_size() + 1,
-			config->get_height() - config->get_pattern_size() + 1,
-			config->get_force_boundary_patterns(), fixed_cells);
+	wfc_core->startSolver(grid_width, grid_height, config->get_force_boundary_patterns(), {});
 }
 
+/* Return all the patterns used by WFC */
 TypedArray<Texture2D> WFC::getPatternTextures() {
 	TypedArray<Texture2D> texture_list;
 
@@ -262,41 +263,72 @@ TypedArray<Texture2D> WFC::getPatternTextures() {
 	return texture_list;
 }
 
-bool WFC::setPatternAtPosition(const Vector2i &cell_pos, pattern_id_t pattern_id) {
+bool WFC::fixPatternsAtCells(
+		const TypedArray<Vector2i> &cell_positions, TypedArray<pattern_id_t> pattern_ids) {
 	if (!wfc_core) {
 		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
 		return false;
 	}
 
-	if (cell_pos.x >= static_cast<int>(grid_width) || cell_pos.y >= static_cast<int>(grid_height)) {
+	size_t num_cells = cell_positions.size();
+	if (num_cells != pattern_ids.size()) {
+		ERR_PRINT("Sizes of list of cell positions and list of patterns do not match.");
 		return false;
 	}
 
-	size_t cell_index = cell_pos.x + cell_pos.y * grid_width;
+	for (size_t i = 0; i < num_cells; ++i) {
+		Vector2i cell_pos = cell_positions[i];
+		if (cell_pos.x >= static_cast<int>(grid_width) ||
+				cell_pos.y >= static_cast<int>(grid_height)) {
+			ERR_PRINT("Cell index is out of bounds.");
+			return false;
+		}
+	}
 
-	bool success = wfc_core->collapseSelectedCell(cell_index, pattern_id);
+	bool success = true;
+	for (size_t i = 0; i < num_cells; ++i) {
+		Vector2i cell_pos = cell_positions[i];
+		pattern_id_t pattern_id = pattern_ids[i];
+		success &= setPatternAtCell(cell_pos, pattern_id);
+	}
+
+	updateTexture();
+
+	return success;
+}
+
+bool WFC::setPatternAtCell(const Vector2i cell_pos, pattern_id_t pattern_id) {
+	if (!wfc_core) {
+		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
+		return false;
+	}
+
+	bool success = true;
+	size_t cell_index = cell_pos.x + cell_pos.y * grid_width;
+	size_t num_channels = sprite_holder->getChannels();
+	size_t pattern_size = config->get_pattern_size();
+	size_t pixels_per_row = pattern_size * num_channels;
+	size_t width = config->get_width();
+
+	success &= wfc_core->collapseSelectedCell(cell_index, pattern_id);
 	if (success) {
 		fixed_cells[cell_index] = pattern_id;
 		std::vector<uint8_t> pattern_pixels =
 				overlapping_patterns->convertIdsToPixels({ &pattern_id, 1 }, 1, 1);
-		size_t start_index = (cell_pos.y * config->get_width() + cell_pos.x) * 4;
-		for (size_t dy = 0; dy < config->get_pattern_size(); ++dy) {
-			for (size_t dx = 0; dx < config->get_pattern_size(); ++dx) {
-				size_t pixel_index = (dy * config->get_pattern_size() + dx) * 4;
-				size_t output_index = start_index + (dy * config->get_width() + dx) * 4;
-				memcpy(pixel_data.ptrw() + output_index, &pattern_pixels[pixel_index], 4);
-			}
+		size_t start_index = (cell_pos.y * config->get_width() + cell_pos.x) * num_channels;
+		for (size_t dy = 0; dy < pattern_size; ++dy) {
+			size_t pixel_index = (dy * pattern_size) * num_channels;
+			size_t output_index = start_index + (dy * width) * num_channels;
+			memcpy(pixel_data.ptrw() + output_index, &pattern_pixels[pixel_index], pixels_per_row);
 		}
-		// Update the output texture with the new pixel data
-		output_image->set_data(
-				config->get_width(), config->get_height(), false, Image::FORMAT_RGBA8, pixel_data);
-		output_texture->update(output_image);
-		this->set_texture(output_texture);
 	}
 
 	return success;
 }
 
+/* Returns a pixel map with the size of the WFC grid such that positions where the pattern can be
+ * located are mapped to white pixels (255) and positions where it cannot be located to black pixels
+ * (0).*/
 Ref<Texture2D> WFC::validCellsForPattern(pattern_id_t pattern_id) {
 	if (!wfc_core) {
 		ERR_PRINT("WFCCore is null. Please call initializeWFCCore() first.");
@@ -319,6 +351,9 @@ Ref<Texture2D> WFC::validCellsForPattern(pattern_id_t pattern_id) {
 	return valid_cells_texture;
 }
 
+// Note(Luis): the algorithm assumes that these are black and white images, such that white pixels
+// get marked with a 1 and black pixels with a 0. Every 2x2 pixels this info is compiled into a
+// number from 0 (all pixels black) to 15 (all white).
 PackedInt32Array WFC::getDualGridPatterns() {
 	size_t pattern_size = config->get_pattern_size();
 	size_t num_channels = sprite_holder->getChannels();
@@ -345,4 +380,11 @@ PackedInt32Array WFC::getDualGridPatterns() {
 	}
 
 	return pattern_ids;
+}
+
+void WFC::updateTexture() {
+	output_image->set_data(
+			config->get_width(), config->get_height(), false, Image::FORMAT_RGBA8, pixel_data);
+	output_texture->update(output_image);
+	this->set_texture(output_texture);
 }

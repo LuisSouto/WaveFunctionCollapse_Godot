@@ -6,7 +6,7 @@ class_name ViewMenu
 enum ViewButtons{
 	HIGHLIGHT_GRID = 0,
 	ORIGINAL_SAMPLE = 1,
-	HIDE_COORDINATES = 2
+	PIXEL_COORDINATES = 2
 }
 
 func _ready():
