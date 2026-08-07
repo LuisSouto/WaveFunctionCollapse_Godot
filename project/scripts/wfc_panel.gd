@@ -66,15 +66,14 @@ func generate_highlight_map() -> void:
 	if selected_panel:
 		var highlight_map: Texture2D = wfc_solver.validCellsForPattern(selected_panel.pattern_id)
 		image_container.highlight_texture.material.set_shader_parameter("highlight_map", highlight_map)
-		# image_container.highlight_texture.visible = true
 
 func on_pixel_clicked_draw(pixel_pos: Vector2i) -> void:
 	if selected_panel:			
-		var success: bool = wfc_solver.fixPatternsAtCells([pixel_pos], [selected_panel.pattern_id])
+		wfc_solver.fixPatternsAtCells([pixel_pos], [selected_panel.pattern_id])
 		generate_highlight_map()
 
 func on_pixel_clicked_erase(pixel_pos: Vector2i) -> void:
-	var success: bool = wfc_solver.erasePatternAtPosition(pixel_pos)
+	wfc_solver.erasePatternAtPosition(pixel_pos)
 	generate_highlight_map()
 
 func on_actions_button_id_pressed(id: int) -> void:

@@ -1,10 +1,11 @@
 [gd_scene format=3 uid="uid://bwkpllqr4tdmd"]
 
 [ext_resource type="Script" uid="uid://cm8r81xp2mcwd" path="res://scripts/player.gd" id="1_0s3u6"]
+[ext_resource type="Texture2D" uid="uid://s5pmhy1lr04l" path="res://assets/player_placeholder.png" id="2_onrkg"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_uq0sl"]
-radius = 24.0
-height = 74.0
+radius = 8.0
+height = 60.0
 
 [node name="Player" type="CharacterBody2D" unique_id=25683687]
 script = ExtResource("1_0s3u6")
@@ -12,15 +13,8 @@ speed = 200.0
 metadata/_custom_type_script = "uid://cm8r81xp2mcwd"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2059117677]
+position = Vector2(1, 6)
 shape = SubResource("CapsuleShape2D_uq0sl")
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=53315163]
-limit_left = -964
-limit_top = -512
-limit_right = 964
-limit_bottom = 512
-drag_left_margin = 1.0
-drag_top_margin = 1.0
-drag_right_margin = 1.0
-drag_bottom_margin = 1.0
-editor_draw_limits = true
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=102425469]
+texture = ExtResource("2_onrkg")

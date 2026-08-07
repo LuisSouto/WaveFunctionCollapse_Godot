@@ -4,6 +4,5 @@
 seed = 5
 width = 32
 height = 32
-pattern_size = 2
 boundary_condition = 3
 transform_flags = 15

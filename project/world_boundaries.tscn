@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://c6rupw8e28ijy"]
+
+[ext_resource type="Script" uid="uid://c7oman7pj58iw" path="res://scripts/world_boundaries.gd" id="1_lm4od"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_sa35n"]
+normal = Vector2(0, 1)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_lm4od"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_0b2ro"]
+normal = Vector2(1, 0)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_4wh6g"]
+normal = Vector2(-1, 0)
+
+[node name="WorldBoundaries" type="Node2D" unique_id=2110957895]
+script = ExtResource("1_lm4od")
+
+[node name="WorldBoundaryDown" type="StaticBody2D" parent="." unique_id=1479266089]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBoundaryDown" unique_id=495341946]
+shape = SubResource("WorldBoundaryShape2D_sa35n")
+
+[node name="WorldBoundaryUp" type="StaticBody2D" parent="." unique_id=1493474079]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBoundaryUp" unique_id=697120219]
+shape = SubResource("WorldBoundaryShape2D_lm4od")
+
+[node name="WorldBoundaryLeft" type="StaticBody2D" parent="." unique_id=904535267]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBoundaryLeft" unique_id=289731468]
+shape = SubResource("WorldBoundaryShape2D_0b2ro")
+
+[node name="WorldBoundaryRight" type="StaticBody2D" parent="." unique_id=788080655]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldBoundaryRight" unique_id=722946325]
+shape = SubResource("WorldBoundaryShape2D_4wh6g")

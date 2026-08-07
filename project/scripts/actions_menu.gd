@@ -6,12 +6,11 @@ class_name ActionsMenu
 enum ActionButtons{
   AUTOCOMPLETE = 0,
   RESET = 1,
-  UNDO = 2,
-	SAVE_IMAGE = 3
+	SAVE_IMAGE = 2
 }
 
 func _ready():
-	var shortcut_keys: Array[int] = [Key.KEY_A, Key.KEY_R, Key.KEY_Z, Key.KEY_S]
+	var shortcut_keys: Array[int] = [Key.KEY_A, Key.KEY_R, Key.KEY_S]
 	for action_index in ActionButtons.values():
 		set_shortcut_for_action(action_index, shortcut_keys[action_index])
 
