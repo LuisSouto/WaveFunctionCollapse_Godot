@@ -101,9 +101,9 @@ void WFC::initializeWFCCore() {
 		seed = static_cast<uint64_t>(config->get_seed());
 	}
 
-	size_t pattern_size = config->get_pattern_size();
-	grid_width = config->get_width() - pattern_size + 1;
-	grid_height = config->get_height() - pattern_size + 1;
+	size_t pattern_length = config->get_pattern_length();
+	grid_width = config->get_width() - pattern_length + 1;
+	grid_height = config->get_height() - pattern_length + 1;
 	wfc_core = std::make_unique<WFCCore>(overlapping_patterns->getAdjacencyData(), seed);
 	wfc_core->startSolver(
 			grid_width, grid_height, config->get_force_boundary_patterns(), fixed_cells);
@@ -116,7 +116,7 @@ void WFC::generateOverlappingPatterns() {
 	}
 
 	overlapping_patterns =
-			std::make_unique<OverlappingPatterns>(*sprite_holder, config->get_pattern_size(),
+			std::make_unique<OverlappingPatterns>(*sprite_holder, config->get_pattern_length(),
 					config->get_boundary_condition(), config->get_transform_flags());
 }
 
@@ -163,6 +163,7 @@ void WFC::_bind_methods() {
 	ClassDB::bind_method(
 			D_METHOD("erasePatternAtPosition", "cell_pos"), &WFC::erasePatternAtPosition);
 	ClassDB::bind_method(D_METHOD("getDualGridPatterns"), &WFC::getDualGridPatterns);
+	ClassDB::bind_method(D_METHOD("findFullPattern"), &WFC::findFullPattern);
 
 	// WFC settings
 	ClassDB::bind_method(D_METHOD("getConfig"), &WFC::getConfig);
@@ -243,7 +244,7 @@ TypedArray<Texture2D> WFC::getPatternTextures() {
 	TypedArray<Texture2D> texture_list;
 
 	const auto &patterns = overlapping_patterns->getInputPixelPatterns();
-	size_t N = config->get_pattern_size();
+	size_t N = config->get_pattern_length();
 	size_t pattern_size = N * N * 4; // Assuming RGBA
 	size_t num_patterns = patterns.size() / pattern_size;
 
@@ -261,6 +262,25 @@ TypedArray<Texture2D> WFC::getPatternTextures() {
 	}
 
 	return texture_list;
+}
+
+int WFC::findFullPattern() {
+	const auto &patterns = overlapping_patterns->getInputPixelPatterns();
+	size_t pattern_length = config->get_pattern_length();
+	size_t num_patterns = overlapping_patterns->getNumPatterns();
+	size_t pattern_size = pattern_length * pattern_length * sprite_holder->getChannels();
+	uint8_t full_pattern = ~0;
+
+	for (size_t i = 0; i < num_patterns; ++i) {
+		uint8_t pattern = ~0;
+		for (size_t j = 0; j < pattern_size; ++j) {
+			pattern &= patterns[i * pattern_size + j];
+		}
+		if (pattern == full_pattern)
+			return i;
+	}
+
+	return -1; // Full pattern not present
 }
 
 bool WFC::fixPatternsAtCells(
@@ -306,8 +326,8 @@ bool WFC::setPatternAtCell(const Vector2i cell_pos, pattern_id_t pattern_id) {
 	bool success = true;
 	size_t cell_index = cell_pos.x + cell_pos.y * grid_width;
 	size_t num_channels = sprite_holder->getChannels();
-	size_t pattern_size = config->get_pattern_size();
-	size_t pixels_per_row = pattern_size * num_channels;
+	size_t pattern_length = config->get_pattern_length();
+	size_t pixels_per_row = pattern_length * num_channels;
 	size_t width = config->get_width();
 
 	success &= wfc_core->collapseSelectedCell(cell_index, pattern_id);
@@ -316,8 +336,8 @@ bool WFC::setPatternAtCell(const Vector2i cell_pos, pattern_id_t pattern_id) {
 		std::vector<uint8_t> pattern_pixels =
 				overlapping_patterns->convertIdsToPixels({ &pattern_id, 1 }, 1, 1);
 		size_t start_index = (cell_pos.y * config->get_width() + cell_pos.x) * num_channels;
-		for (size_t dy = 0; dy < pattern_size; ++dy) {
-			size_t pixel_index = (dy * pattern_size) * num_channels;
+		for (size_t dy = 0; dy < pattern_length; ++dy) {
+			size_t pixel_index = (dy * pattern_length) * num_channels;
 			size_t output_index = start_index + (dy * width) * num_channels;
 			memcpy(pixel_data.ptrw() + output_index, &pattern_pixels[pixel_index], pixels_per_row);
 		}
@@ -355,9 +375,9 @@ Ref<Texture2D> WFC::validCellsForPattern(pattern_id_t pattern_id) {
 // get marked with a 1 and black pixels with a 0. Every 2x2 pixels this info is compiled into a
 // number from 0 (all pixels black) to 15 (all white).
 PackedInt32Array WFC::getDualGridPatterns() {
-	size_t pattern_size = config->get_pattern_size();
+	size_t pattern_length = config->get_pattern_length();
 	size_t num_channels = sprite_holder->getChannels();
-	size_t pattern_stride = pattern_size * num_channels;
+	size_t pattern_stride = pattern_length * num_channels;
 	size_t dualgrid_width = grid_width;
 	size_t dualgrid_height = grid_height;
 	size_t total_width = config->get_width();
@@ -367,12 +387,12 @@ PackedInt32Array WFC::getDualGridPatterns() {
 		for (size_t x = 0; x < dualgrid_width; ++x) {
 			size_t pixel_index = (x + y * total_width) * num_channels;
 			int32_t pattern_id = 0;
-			for (size_t dy = 0; dy < pattern_size; ++dy) {
-				for (size_t dx = 0; dx < pattern_size; ++dx) {
+			for (size_t dy = 0; dy < pattern_length; ++dy) {
+				for (size_t dx = 0; dx < pattern_length; ++dx) {
 					uint8_t pixel_value =
 							pixel_data[pixel_index + (dx + dy * total_width) * num_channels];
-					pattern_id |=
-							(static_cast<int32_t>(pixel_value >> 7) << ((dy * pattern_size + dx)));
+					pattern_id |= (static_cast<int32_t>(pixel_value >> 7)
+							<< ((dy * pattern_length + dx)));
 				}
 			}
 			pattern_ids[x + y * dualgrid_width] = pattern_id;

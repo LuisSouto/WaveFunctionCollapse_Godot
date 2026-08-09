@@ -59,6 +59,8 @@ public:
 
 	TypedArray<Texture2D> getPatternTextures();
 
+	int findFullPattern();
+
 	void resetImage();
 
 	bool fixPatternsAtCells(

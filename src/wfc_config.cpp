@@ -14,9 +14,9 @@ void WFCConfig::_bind_methods() {
 			D_METHOD("get_cell_selection_strategy"), &WFCConfig::get_cell_selection_strategy);
 	ClassDB::bind_method(D_METHOD("set_cell_selection_strategy", "cell_selection_strategy"),
 			&WFCConfig::set_cell_selection_strategy);
-	ClassDB::bind_method(D_METHOD("get_pattern_size"), &WFCConfig::get_pattern_size);
+	ClassDB::bind_method(D_METHOD("get_pattern_length"), &WFCConfig::get_pattern_length);
 	ClassDB::bind_method(
-			D_METHOD("set_pattern_size", "pattern_size"), &WFCConfig::set_pattern_size);
+			D_METHOD("set_pattern_length", "pattern_length"), &WFCConfig::set_pattern_length);
 	ClassDB::bind_method(
 			D_METHOD("get_force_boundary_patterns"), &WFCConfig::get_force_boundary_patterns);
 	ClassDB::bind_method(D_METHOD("set_force_boundary_patterns", "force_boundary_patterns"),
@@ -46,8 +46,8 @@ void WFCConfig::_bind_methods() {
 			"get_width");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "height", PROPERTY_HINT_RANGE, "1,1024,1"),
 			"set_height", "get_height");
-	ADD_PROPERTY(
-			PropertyInfo(Variant::INT, "pattern_size"), "set_pattern_size", "get_pattern_size");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "pattern_length"), "set_pattern_length",
+			"get_pattern_length");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "cell_selection_strategy", PROPERTY_HINT_ENUM,
 						 "Scanline,Entropy", PROPERTY_USAGE_DEFAULT, "Cell Selection Strategy"),
 			"set_cell_selection_strategy", "get_cell_selection_strategy");

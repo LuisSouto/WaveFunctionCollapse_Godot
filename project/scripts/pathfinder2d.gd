@@ -1,6 +1,6 @@
 class_name PathFinder2D
 
-static func generateBrownianBridgePath(start: float, end: float, steps: int, vol: float) -> Array[int]:
+static func generateBrownianBridgePath(start: float, end: float, steps: int, vol: float, max_val: int) -> Array[int]:
 	var brownian_path: Array[float] = []
 	brownian_path.resize(steps + 1)
 	brownian_path[0] = 0
@@ -15,6 +15,10 @@ static func generateBrownianBridgePath(start: float, end: float, steps: int, vol
 	bridge_path.resize(steps + 1)
 	for i in range(steps + 1):
 		bridge_path[i] = roundi(start + (end - start) * i / steps +  brownian_path[i] - bridge_adjustment * i)
+
+	# Clamp values between 0 and max_val
+	for i in range(steps + 1):
+		bridge_path[i] = clampi(bridge_path[i], 0, max_val)
 
 	return bridge_path
 
@@ -37,8 +41,8 @@ static func connectPath(nodes: Array[int], start_x: int, end_x: int) -> Array[Ve
 	return path
 
 # Find a path between two points using Brownian bridge
-static func pathfinder(start: Vector2i, end: Vector2i, vol: float) -> Array[Vector2i]:
+static func pathfinder(start: Vector2i, end: Vector2i, vol: float, max_val: int) -> Array[Vector2i]:
 	var steps: int = abs(end.x - start.x)
-	var bridge_path: Array[int] = generateBrownianBridgePath(start.y, end.y, steps, vol)
+	var bridge_path: Array[int] = generateBrownianBridgePath(start.y, end.y, steps, vol, max_val)
 
 	return connectPath(bridge_path, start.x, end.x)

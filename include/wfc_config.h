@@ -13,7 +13,7 @@ protected:
 	uint32_t height;
 	int seed;
 	int start_index;
-	uint8_t pattern_size;
+	uint8_t pattern_length;
 	uint8_t transform_flags;
 	BoundaryCondition boundary_condition;
 	CellSelectionStrategy cell_selection_strategy;
@@ -29,7 +29,7 @@ public:
 		start_index = -1;
 		boundary_condition = BoundaryCondition::NONE;
 		cell_selection_strategy = CellSelectionStrategy::SCANLINE;
-		pattern_size = 3;
+		pattern_length = 3;
 		force_boundary_patterns = false;
 		transform_flags = 1;
 	}
@@ -49,8 +49,8 @@ public:
 		cell_selection_strategy = p_cell_selection_strategy;
 	}
 
-	uint8_t get_pattern_size() const { return pattern_size; }
-	void set_pattern_size(uint8_t p_pattern_size) { pattern_size = p_pattern_size; }
+	uint8_t get_pattern_length() const { return pattern_length; }
+	void set_pattern_length(uint8_t p_pattern_length) { pattern_length = p_pattern_length; }
 
 	uint32_t get_width() const { return width; }
 	void set_width(uint32_t p_width) { width = p_width; }

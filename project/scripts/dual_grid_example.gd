@@ -11,29 +11,32 @@ class_name DualGridExample
 static var pattern_map: Array[int] = [6, 5, 2, 3, 10, 1, 4, 13, 7, 14, 11, 0, 9, 8, 15, 12]
 
 func _ready() -> void:
-	visualLayer.position = -get_viewport().size * 0.5
+	# Fix a path from a start tile to an end tile. This could be used to ensure there is always a path between the entrance and exit	
+	var fixed_pattern_id: int = wfc.findFullPattern()
 
-	# Fix a path from a start tile to an end tile	
-	var fixed_pattern_id: int = 10 # One could also make a list of "path" patterns and randomly sample from it. Either way the pattern ids that can be used for paths need to be known in advance.
-
-	# Start and end can be either hardcoded or obtained from other procedural generation methods. For example, binary partition could divide the level into rooms, including the entrances and exits for each room.
+	# Start and end can be either hardcoded or obtained from other procedural generation methods.
+	var path_max_val: int = wfc.config.height - wfc.config.pattern_size
 	var path_start: Vector2i = Vector2i(0, 6)
 	var path_end: Vector2i = Vector2i(wfc.config.width - wfc.config.pattern_size, 9)
-	var path: Array[Vector2i] = PathFinder2D.pathfinder(path_start, path_end, 1)
+	var path: Array[Vector2i] = PathFinder2D.pathfinder(path_start, path_end, 1.5, path_max_val)
 	var fixed_pattern_list: Array[int]
 	fixed_pattern_list.resize(path.size())
 	fixed_pattern_list.fill(fixed_pattern_id)
 	wfc.fixPatternsAtCells(path, fixed_pattern_list)			
-
 	wfc.autocompleteImage()
+
 	fillVisualLayer()
 
 	levelEntrance.position = visualLayer.to_global(visualLayer.map_to_local(path_start))
 	player.position = visualLayer.to_global(visualLayer.map_to_local(path_start + Vector2i(1, 0)))
 
+	var min_axis: int = player_sprite.texture.get_size().min_axis_index()
+	player.scale = visualLayer.scale * visualLayer.tile_set.tile_size[min_axis] / player_sprite.texture.get_size()[min_axis]
+
 
 # Map the pattern ids from the simplified texture to the atlas of the visual layer
 func fillVisualLayer() -> void:
+	visualLayer.position = -get_viewport().size * 0.5	
 	var pattern_ids: PackedInt32Array = wfc.getDualGridPatterns()
 	var tilemap_size: int = wfc.config.width - wfc.config.pattern_size + 1
 
