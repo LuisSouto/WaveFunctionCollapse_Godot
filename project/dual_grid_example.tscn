@@ -49,7 +49,7 @@ sources/0 = SubResource("TileSetAtlasSource_5xaas")
 [sub_resource type="WFCConfig" id="WFCConfig_uq0sl"]
 width = 16
 height = 16
-pattern_size = 2
+pattern_length = 2
 boundary_condition = 3
 transform_flags = 15
 

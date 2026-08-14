@@ -104,9 +104,9 @@ void WFC::initializeWFCCore() {
 	size_t pattern_length = config->get_pattern_length();
 	grid_width = config->get_width() - pattern_length + 1;
 	grid_height = config->get_height() - pattern_length + 1;
-	wfc_core = std::make_unique<WFCCore>(overlapping_patterns->getAdjacencyData(), seed);
-	wfc_core->startSolver(
-			grid_width, grid_height, config->get_force_boundary_patterns(), fixed_cells);
+	wfc_core = std::make_unique<WFCCore>(overlapping_patterns->generateAdjacencyData(), seed);
+	wfc_core->startSolver(grid_width, grid_height, config->get_force_boundary_patterns(),
+			config->get_cell_selection_strategy(), fixed_cells);
 }
 
 void WFC::generateOverlappingPatterns() {
@@ -200,7 +200,8 @@ bool WFC::erasePatternAtPosition(const Vector2i &cell_pos) {
 	output_texture->update(output_image);
 
 	// Do not add the fixed cells yet or the texture won't be updated
-	wfc_core->startSolver(grid_width, grid_height, config->get_force_boundary_patterns(), {});
+	wfc_core->startSolver(grid_width, grid_height, config->get_force_boundary_patterns(),
+			config->get_cell_selection_strategy(), {});
 
 	for (auto &[cell_index, pattern_id] : fixed_cells) {
 		Vector2i cell_pos(cell_index % grid_width, cell_index / grid_width);
@@ -236,7 +237,8 @@ void WFC::resetImage() {
 	pixel_data.fill(0);
 	updateTexture();
 
-	wfc_core->startSolver(grid_width, grid_height, config->get_force_boundary_patterns(), {});
+	wfc_core->startSolver(grid_width, grid_height, config->get_force_boundary_patterns(),
+			config->get_cell_selection_strategy(), {});
 }
 
 /* Return all the patterns used by WFC */

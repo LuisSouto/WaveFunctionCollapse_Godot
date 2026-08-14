@@ -15,9 +15,9 @@ func _ready() -> void:
 	var fixed_pattern_id: int = wfc.findFullPattern()
 
 	# Start and end can be either hardcoded or obtained from other procedural generation methods.
-	var path_max_val: int = wfc.config.height - wfc.config.pattern_size
+	var path_max_val: int = wfc.config.height - wfc.config.pattern_length
 	var path_start: Vector2i = Vector2i(0, 6)
-	var path_end: Vector2i = Vector2i(wfc.config.width - wfc.config.pattern_size, 9)
+	var path_end: Vector2i = Vector2i(wfc.config.width - wfc.config.pattern_length, 9)
 	var path: Array[Vector2i] = PathFinder2D.pathfinder(path_start, path_end, 1.5, path_max_val)
 	var fixed_pattern_list: Array[int]
 	fixed_pattern_list.resize(path.size())
@@ -38,7 +38,7 @@ func _ready() -> void:
 func fillVisualLayer() -> void:
 	visualLayer.position = -get_viewport().size * 0.5	
 	var pattern_ids: PackedInt32Array = wfc.getDualGridPatterns()
-	var tilemap_size: int = wfc.config.width - wfc.config.pattern_size + 1
+	var tilemap_size: int = wfc.config.width - wfc.config.pattern_length + 1
 
 	var tile_pos: Vector2i = Vector2i.ZERO
 	for y in range(tilemap_size):

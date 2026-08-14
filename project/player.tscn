@@ -9,7 +9,7 @@ height = 24.0
 
 [node name="Player" type="CharacterBody2D" unique_id=25683687]
 script = ExtResource("1_0s3u6")
-speed = 200.0
+speed = 500.0
 metadata/_custom_type_script = "uid://cm8r81xp2mcwd"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2059117677]
