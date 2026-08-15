@@ -4,10 +4,9 @@
 #include "godot_cpp/classes/sprite2d.hpp"
 #include "overlapping_patterns.h"
 #include "sprite_holder.h"
+#include "wfc_config.h"
+#include "wfc_core.h"
 #include "wfc_typedefs.h"
-#include <sprite_reader.h>
-#include <wfc_config.h>
-#include <wfc_core.h>
 #include <cstddef>
 #include <memory>
 #include <unordered_map>
@@ -20,14 +19,13 @@ class WFC : public Sprite2D {
 protected:
 	std::unordered_map<size_t, pattern_id_t> fixed_cells = {};
 	PackedByteArray pixel_data;
-	std::vector<uint8_t> input_patterns_as_pixels;
 	Ref<WFCConfig> config;
 	Sprite2D *input_sprite = nullptr;
 	Ref<Image> output_image;
 	Ref<ImageTexture> output_texture;
 	std::unique_ptr<SpriteHolder> sprite_holder = nullptr;
-	std::unique_ptr<WFCCore> wfc_core = nullptr;
 	std::unique_ptr<OverlappingPatterns> overlapping_patterns = nullptr;
+	std::unique_ptr<WFCCore> wfc_core = nullptr;
 	size_t grid_width;
 	size_t grid_height;
 

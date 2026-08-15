@@ -1,6 +1,7 @@
 #pragma once
 
 #include "godot_cpp/classes/resource.hpp"
+#include "sprite_transforms.h"
 #include <wfc_settings.h>
 
 using namespace godot;
@@ -13,10 +14,10 @@ protected:
 	uint32_t height;
 	int seed;
 	int start_index;
-	uint8_t pattern_length;
-	uint8_t transform_flags;
 	BoundaryCondition boundary_condition;
 	CellSelectionStrategy cell_selection_strategy;
+	uint8_t pattern_length;
+	uint8_t transform_flags;
 	bool force_boundary_patterns;
 
 	static void _bind_methods();
@@ -31,7 +32,7 @@ public:
 		cell_selection_strategy = CellSelectionStrategy::SCANLINE;
 		pattern_length = 3;
 		force_boundary_patterns = false;
-		transform_flags = 1;
+		transform_flags = SpriteTransforms::IDENTITY;
 	}
 	~WFCConfig() override = default;
 
@@ -40,7 +41,6 @@ public:
 
 	BoundaryCondition get_boundary_condition() const { return boundary_condition; }
 	void set_boundary_condition(BoundaryCondition p_boundary_condition) {
-		printf("Setting condition to: %d\n", (int)p_boundary_condition);
 		boundary_condition = p_boundary_condition;
 	}
 

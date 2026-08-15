@@ -4,4 +4,4 @@
 	branch = 4.3
 [submodule "wfc_solver"]
 	path = wfc_solver
-	url = https://github.com/LuisSouto/WaveFunctionCollapse.git
+	url = https://github.com/LuisSouto/WaveFunctionCollapse_CPP.git

@@ -37,7 +37,6 @@ add_library(${LIBNAME} SHARED)
 
 target_sources(${LIBNAME} PRIVATE
     src/register_types.cpp
-    src/example_class.cpp
     src/wfc_config.cpp
     src/wfc_wrapper.cpp
 )
