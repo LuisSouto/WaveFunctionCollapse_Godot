@@ -1,5 +1,5 @@
-#include <wfc_config.h>
-#include <godot_cpp/core/class_db.hpp>
+#include "wfc_config.h"
+#include "godot_cpp/core/class_db.hpp"
 
 using namespace godot;
 

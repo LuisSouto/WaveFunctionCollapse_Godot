@@ -23,7 +23,7 @@ func _ready() -> void:
 	fixed_pattern_list.resize(path.size())
 	fixed_pattern_list.fill(fixed_pattern_id)
 	wfc.fixPatternsAtCells(path, fixed_pattern_list)			
-	wfc.autocompleteImage()
+	wfc.solve()
 
 	fillVisualLayer()
 

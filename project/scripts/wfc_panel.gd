@@ -79,7 +79,7 @@ func on_pixel_clicked_erase(pixel_pos: Vector2i) -> void:
 func on_actions_button_id_pressed(id: int) -> void:
 	match id:
 		ActionsMenu.ActionButtons.AUTOCOMPLETE:
-			wfc_solver.autocompleteImage()
+			wfc_solver.solve()
 
 		ActionsMenu.ActionButtons.RESET:
 			wfc_solver.resetImage()

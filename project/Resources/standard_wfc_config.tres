@@ -3,4 +3,5 @@
 [resource]
 width = 32
 height = 32
+cell_selection_strategy = 1
 force_boundary_patterns = true

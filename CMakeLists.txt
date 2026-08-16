@@ -9,10 +9,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(LIBNAME "wavefunctioncollapse")
 set(GODOT_PROJECT_DIR "project" CACHE STRING "Directory of the Godot project")
 
-# Dependencies
-find_package(Python3 3.4 REQUIRED)
-find_program(GIT git REQUIRED)
-
 # Helper to auto-update submodules if they are missing
 macro(check_submodule PATH NAME)
     if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${PATH}/CMakeLists.txt")

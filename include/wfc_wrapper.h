@@ -18,7 +18,7 @@ class WFC : public Sprite2D {
 
 protected:
 	std::unordered_map<size_t, pattern_id_t> fixed_cells = {};
-	PackedByteArray pixel_data;
+	PackedByteArray output_pixel_data;
 	Ref<WFCConfig> config;
 	Sprite2D *input_sprite = nullptr;
 	Ref<Image> output_image;
@@ -34,7 +34,6 @@ protected:
 	void generateOverlappingPatterns();
 	void initializeWFCCore();
 	void initializeOutputTexture();
-	std::vector<uint8_t> generateOutputPixelImage();
 	void mapPixelsToTexture(const std::vector<uint8_t> &pixels);
 	void updateTexture();
 	bool setPatternAtCell(const Vector2i cell_pos, pattern_id_t pattern_id);
@@ -43,7 +42,7 @@ public:
 	WFC() = default;
 	~WFC() override = default;
 
-	void autocompleteImage();
+	void solve();
 
 	bool erasePatternAtPosition(const Vector2i &cell_pos);
 
@@ -57,7 +56,7 @@ public:
 
 	TypedArray<Texture2D> getPatternTextures();
 
-	int findFullPattern();
+	int findPathPattern();
 
 	void resetImage();
 
