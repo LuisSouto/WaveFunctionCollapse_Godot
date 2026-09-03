@@ -27,7 +27,7 @@ You can also use a debug build instead of release if you prefer. The library .so
 Please keep in mind that I only use Ubuntu and therefore I haven't tested compiling in other operating systems. If you encounter any problems I'm happy to look at the issue together.
 
 ## Submodules
-This repository depends on two submodules: godot_cpp for the GDExtension funcionality, and WaveFunctionCollapse_CPP which contains the actual WFC implementation.
+This repository depends on two submodules: [godot-cpp](https://github.com/godotengine/godot-cpp) for the GDExtension funcionality, and [WaveFunctionCollapse_CPP](https://github.com/LuisSouto/WaveFunctionCollapse_CPP) which contains the actual WFC implementation.
 
 ## AI Disclosure
 I made use of AI to help me configure the CMake file and to help me register a few properties in Godot. I still wrote the code myself in my own style though, no vibe coding involved.
@@ -42,4 +42,4 @@ All assets in `project/assets` were made by me. As you can tell I'm no artist.
 ## License
 Copyright (c) 2026 Luis Antonio Souto Arias
 
-MIT License, see License.md for further details.
+MIT License, see LICENSE.md for further details.
