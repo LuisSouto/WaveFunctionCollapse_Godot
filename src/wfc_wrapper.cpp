@@ -139,14 +139,14 @@ void WFC::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("getPatternTextures"), &WFC::getPatternTextures);
 	ClassDB::bind_method(
 			D_METHOD("validCellsForPattern", "pattern_id"), &WFC::validCellsForPattern);
-	ClassDB::bind_method(D_METHOD("fixPatternsAtCells", "cell_indexes", "pattern_ids"),
+	ClassDB::bind_method(D_METHOD("fixPatternsAtCells", "cell_positions", "pattern_ids"),
 			&WFC::fixPatternsAtCells);
 	ClassDB::bind_method(D_METHOD("solve"), &WFC::solve);
 	ClassDB::bind_method(D_METHOD("resetImage"), &WFC::resetImage);
 	ClassDB::bind_method(
 			D_METHOD("erasePatternAtPosition", "cell_pos"), &WFC::erasePatternAtPosition);
 	ClassDB::bind_method(D_METHOD("getDualGridPatterns"), &WFC::getDualGridPatterns);
-	ClassDB::bind_method(D_METHOD("findFullPattern"), &WFC::findPathPattern);
+	ClassDB::bind_method(D_METHOD("findPathPattern"), &WFC::findPathPattern);
 
 	// WFC settings
 	ClassDB::bind_method(D_METHOD("getConfig"), &WFC::getConfig);

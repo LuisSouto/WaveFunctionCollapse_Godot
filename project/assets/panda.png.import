@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ryv5n04fjehf"
-path="res://.godot/imported/dualgrid_input.png-897171ef5b62cef4f98aa862ff4e97f6.ctex"
+uid="uid://c24sadih8kgg1"
+path="res://.godot/imported/panda.png-536b05b1eb4bb771aba9c8ca17e19206.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/dualgrid_input.png"
-dest_files=["res://.godot/imported/dualgrid_input.png-897171ef5b62cef4f98aa862ff4e97f6.ctex"]
+source_file="res://assets/panda.png"
+dest_files=["res://.godot/imported/panda.png-536b05b1eb4bb771aba9c8ca17e19206.ctex"]
 
 [params]
 

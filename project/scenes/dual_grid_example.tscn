@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://d1hqnou300hrh" path="res://scripts/dual_grid_example.gd" id="1_pxhic"]
 [ext_resource type="Texture2D" uid="uid://o2cn0i3dixfp" path="res://assets/dual_grid_v3.png" id="2_3dpin"]
 [ext_resource type="PackedScene" uid="uid://bei7clhw1iovh" path="res://cave_door.tscn" id="2_a05u1"]
-[ext_resource type="Texture2D" uid="uid://jgqw21b0cwd7" path="res://Sprites/Circle.png" id="4_a05u1"]
 [ext_resource type="PackedScene" uid="uid://bwkpllqr4tdmd" path="res://player.tscn" id="4_fmjsm"]
+[ext_resource type="Texture2D" uid="uid://phhq12qdml5a" path="res://assets/circle.png" id="5_3dpin"]
 [ext_resource type="PackedScene" uid="uid://c6rupw8e28ijy" path="res://world_boundaries.tscn" id="6_3dpin"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5xaas"]
@@ -51,9 +51,9 @@ width = 16
 height = 16
 pattern_length = 2
 boundary_condition = 3
-transform_flags = 15
+transform_flags = 53
 
-[sub_resource type="Image" id="Image_3dpin"]
+[sub_resource type="Image" id="Image_5xaas"]
 data = {
 "data": PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 "format": "RGBA8",
@@ -62,8 +62,8 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id="ImageTexture_5xaas"]
-image = SubResource("Image_3dpin")
+[sub_resource type="ImageTexture" id="ImageTexture_j43qh"]
+image = SubResource("Image_5xaas")
 
 [node name="DualGridExample" type="Node2D" unique_id=1080267272]
 script = ExtResource("1_pxhic")
@@ -75,10 +75,10 @@ tile_set = SubResource("TileSet_uc6nc")
 
 [node name="WorldBoundaries" parent="." unique_id=2110957895 instance=ExtResource("6_3dpin")]
 
-[node name="CaveDoor" parent="." unique_id=375735102 instance=ExtResource("2_a05u1")]
+[node name="Entrance" parent="." unique_id=375735102 instance=ExtResource("2_a05u1")]
 position = Vector2(0, -29)
-target_scene = "wfc_dungeon.tscn"
-player_spawn_pos = Vector2(113, -64)
+target_scene = "dual_grid_example.tscn"
+entrance_id = 1
 
 [node name="WFC" type="WFC" parent="." unique_id=132092762 node_paths=PackedStringArray("input_sprite")]
 config = SubResource("WFCConfig_uq0sl")
@@ -87,13 +87,17 @@ visible = false
 texture_filter = 1
 position = Vector2(-360, 0)
 scale = Vector2(12, 12)
-texture = SubResource("ImageTexture_5xaas")
+texture = SubResource("ImageTexture_j43qh")
 
 [node name="InputSample" type="Sprite2D" parent="WFC" unique_id=1646657841]
 visible = false
-texture = ExtResource("4_a05u1")
+texture = ExtResource("5_3dpin")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1232170946]
 
 [node name="Player" parent="." unique_id=25683687 instance=ExtResource("4_fmjsm")]
 position = Vector2(-61, -30)
+
+[node name="Exit" parent="." unique_id=879054450 instance=ExtResource("2_a05u1")]
+position = Vector2(135, -29)
+target_scene = "dual_grid_example.tscn"

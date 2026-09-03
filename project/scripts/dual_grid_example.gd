@@ -4,7 +4,8 @@ class_name DualGridExample
 
 @onready var wfc: WFC = $WFC
 @onready var visualLayer: TileMapLayer = $VisualLayer
-@onready var levelEntrance: CaveDoor = $CaveDoor
+@onready var levelEntrance: CaveDoor = $Entrance
+@onready var levelExit: CaveDoor = $Exit
 @onready var player: Player = $Player
 @onready var player_sprite: Sprite2D = $Player/Sprite2D
 # This mapping is due to how I define my tilesets in Aseprite
@@ -28,7 +29,11 @@ func _ready() -> void:
 	fillVisualLayer()
 
 	levelEntrance.position = visualLayer.to_global(visualLayer.map_to_local(path_start))
-	player.position = visualLayer.to_global(visualLayer.map_to_local(path_start + Vector2i(1, 0)))
+	levelExit.position = visualLayer.to_global(visualLayer.map_to_local(path_end))
+	if (GlobalVariables.entrance_id == 0):
+		player.position = visualLayer.to_global(visualLayer.map_to_local(path_start) + 1.5 * visualLayer.tile_set.tile_size * Vector2(1, 0))
+	else:
+		player.position = visualLayer.to_global(visualLayer.map_to_local(path_end) - 1.5 * visualLayer.tile_set.tile_size * Vector2(1, 0))
 
 	var min_axis: int = player_sprite.texture.get_size().min_axis_index()
 	player.scale = visualLayer.scale * visualLayer.tile_set.tile_size[min_axis] / player_sprite.texture.get_size()[min_axis]

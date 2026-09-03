@@ -1,24 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<class name="ExampleClass" inherits="RefCounted" api_type="extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
-	<brief_description>
-		Example class.
-	</brief_description>
-	<description>
-		An example class.
-	</description>
-	<tutorials>
-	</tutorials>
-	<methods>
-		<method name="print_type" qualifiers="const">
-			<return type="void" />
-			<param index="0" name="variant" type="Variant" />
-			<description>
-				Print the type of the variant.
-			</description>
-		</method>
-	</methods>
-</class>
-
 <class name="WFC" inherits="Sprite2D" api_type="extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
 	<brief_description>
 		Wave Function Collapse algorithm
@@ -29,7 +8,7 @@
 	<tutorials>
 	</tutorials>
 	<methods>
-		<method name="autocompleteImage">
+		<method name="solve">
 			<return type="void" />
 			<description>
 				Fills remaining empty pixels in the output image using the WFC algorithm.
@@ -37,9 +16,10 @@
 		</method>
 		<method name="erasePatternAtPosition">
 			<return type="bool" />
-			<param index="0" name="cell_pos" type="Vector2i" />
+			<argument index="0" name="cell_pos" type="Vector2i"/>
 			<description>
-				Returns true if the pattern was successfully erased, false otherwise. Cells collapsed via "autocompleteImage" cannot be erased this way.
+				Erase the pattern at the given location [code]cell_pos[/code]. Nothing happens if the cell was already empty.[br]
+				Returns true if the pattern was successfully erased or if the cell was already empty, false otherwise. Cells collapsed via the "solve" function cannot be erased this way.
 			</description>
 		</method>
 		<method name="getPatternTextures">
@@ -54,9 +34,9 @@
 				Resets the output image to its initial blank state.
 			</description>
 		</method>
-		<method name="fixPatternsAtPositions">
+		<method name="fixPatternsAtCells">
 			<return type="bool" />
-			<param index="0" name="cell_indexes" type="Array[Vector2i]" />
+			<param index="0" name="cell_positions" type="Array[Vector2i]" />
 			<param index="1" name="pattern_ids" type="Array[int]" />
 			<description>
 				Returns true if all the patterns were successfully set, false otherwise. Cells that are already collapsed cannot be overwritten.
@@ -69,12 +49,25 @@
 				Returns a texture highlighting the valid cells where the specified pattern can be placed. Valid cells are marked in white, while invalid cells are marked in black.
 			</description>
 		</method>
+		<method name="getDualGridPatterns">
+			<return type="Array[int]" />
+			<description>
+				Given a black and white input sprite, it extracts NxN patterns from the [b]{output}[/b] image using unique identifiers based on which pixels are black or white, instead of using the order in which the patterns were found in the input image.
+			</description>
+		</method>
+		<method name="findPathPattern">
+			<return type="int" />
+			<description>
+				Given a black and white input sprite, finds the unique identifier of a pattern whose pixels are all white. The assumption is that white means there's ground while black means there's not. If such pattern does not exist the function returns -1.
+			</description>
+		</method>				
 	</methods>
 	<members>
 		<member name="config" type="WFCConfig" setter="setConfig" getter="getConfig">
 			Configuration resource for the WFC algorithm. It contains parameters such as output image size, pattern size, boundary conditions, and more.
 		</member>
 		<member name="input_sprite" type="Sprite2D" setter="setInputSprite" getter="getInputSprite">
+			The input sprite that procedurally generated images will be based on.
 		</member>
 	</members>
 </class>
@@ -101,8 +94,8 @@
 		<member name="height" type="int" setter="set_height" getter="get_height" default="64">
 			Height of the output image.
 		</member>
-		<member name="pattern_size" type="int" setter="set_pattern_size" getter="get_pattern_size" default="3">
-			Size (in pixels) of the patterns used in the WFC algorithm.
+		<member name="pattern_length" type="int" setter="set_pattern_length" getter="get_pattern_length" default="3">
+			Length (in pixels) of the patterns used in the WFC algorithm.
 		</member>
 		<member name="seed" type="int" setter="set_seed" getter="get_seed" default="-1">
 			Random seed for the WFC algorithm. Default is -1, which uses a random seed. For reproducible results, set a positive seed value.
@@ -110,7 +103,7 @@
 		<member name="start_index" type="int" setter="set_start_index" getter="get_start_index" default="-1">
 			Index of the starting cell for the WFC algorithm. Default is -1, which lets the algorithm choose the starting cell randomly.
 		</member>
-		<member name="transform_flags" type="int" setter="set_transform_flags" getter="get_transform_flags" default="0">
+		<member name="transform_flags" type="int" setter="set_transform_flags" getter="get_transform_flags" default="1">
 			Trigger transformations (rotations and reflections) on the input image to extract more patterns. Default is 0, which means no transformations. 
 		</member>
 		<member name="width" type="int" setter="set_width" getter="get_width" default="64">

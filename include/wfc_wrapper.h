@@ -61,7 +61,7 @@ public:
 	void resetImage();
 
 	bool fixPatternsAtCells(
-			const TypedArray<Vector2i> &cell_pos, TypedArray<pattern_id_t> pattern_id);
+			const TypedArray<Vector2i> &cell_positions, TypedArray<pattern_id_t> pattern_ids);
 
 	Ref<Texture2D> validCellsForPattern(pattern_id_t pattern_id);
 
