@@ -11,7 +11,7 @@ I mention this for transparency and because some people may want to use librarie
 ## Usage
 The implementation of the WFC algorithm is encapsulated in the WFC Godot class. The list of methods and members is provided in the Godot documentation included in this repo.
 
-There are two examples showcasing who to use this class to generate procedurally generated levels. The first application is contained in the file wfc_panel.gd. This scene pops up a window where you can draw on an empty canvas using the patterns extracted from the input sprite, and WFC will fill in the blanks when the autocomplete button is pressed
+There are two examples showcasing who to use this class to generate procedurally generated levels. The first application is contained in the file wfc_panel.gd. This scene pops up a window where you can draw on an empty canvas using the patterns extracted from the input sprite, and WFC will fill in the blanks when the autocomplete button is pressed. <video src="https://github.com/LuisSouto/WaveFunctionCollapse_Godot/blob/main/doc_media/wfc_panel_demo.mp4">
 
 
 ## How to build
