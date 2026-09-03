@@ -13,7 +13,7 @@ static var pattern_map: Array[int] = [6, 5, 2, 3, 10, 1, 4, 13, 7, 14, 11, 0, 9,
 
 func _ready() -> void:
 	# Fix a path from a start tile to an end tile. This could be used to ensure there is always a path between the entrance and exit	
-	var fixed_pattern_id: int = wfc.findFullPattern()
+	var fixed_pattern_id: int = wfc.findPathPattern()
 
 	# Start and end can be either hardcoded or obtained from other procedural generation methods.
 	var path_max_val: int = wfc.config.height - wfc.config.pattern_length
