@@ -1,3 +1,0 @@
-# Helps ignoring error related to this flag in the editor
-CompileFlags:
-  Remove: [-fno-gnu-unique]

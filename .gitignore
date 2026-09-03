@@ -4,6 +4,11 @@
 
 # Clangd stuff
 .cache
+.clangd
+.clang-format
+
+# Editor stuff
+.editorconfig
 
 # Input and output folders
 Sprites
