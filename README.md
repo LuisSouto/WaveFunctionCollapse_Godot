@@ -1,5 +1,5 @@
 ## Intro
-Godot wrapper for a Wave Function Collapse (WFC) implementation in C++ through GDExtension. Please check [WaveFunctionCollapse_CPP's README](https://github.com/LuisSouto/WaveFunctionCollapse_CPP#) and references therein for details about WFC.
+Godot wrapper for a Wave Function Collapse (WFC) implementation in 2D in C++ through GDExtension. Please check [WaveFunctionCollapse_CPP's README](https://github.com/LuisSouto/WaveFunctionCollapse_CPP#) and references therein for details about WFC.
 
 ## Usage
 The implementation of the WFC algorithm is encapsulated in the WFC class. The list of methods and members is provided in the Godot documentation included in this repo. The most important one is the `Config` property, an instance of the `WFCConfig` resource. There you can specify settings like the size of the output image, periodicity conditions, pattern length, etc.
